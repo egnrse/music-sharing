@@ -1,13 +1,37 @@
-// get audio element
+// audio player
+const rows = document.querySelectorAll('#playlist tbody tr');
 const player = document.getElementById('player');
-// get all track divs
-const tracks = document.querySelectorAll('.track');
+const currentTrackLabel = document.getElementById('current-track');
 
-tracks.forEach(track => {
-	track.addEventListener('click', () => {
-		const src = track.dataset.src;
-		player.src = src;
-		player.play();
+const artistColumn = 1
+const trackColumn = 2
+
+function playTrack(track) {
+	player.src = track;
+	player.play();
+
+}
+
+rows.forEach(row => {
+	// double-click to play the track
+	const playBtn = row.querySelector('.play-btn');
+	row.addEventListener('dblclick', () => {
+		if (playBtn) {
+			playTrack(playBtn.dataset.src);
+			
+			// show currently playing
+			const artist = row.cells[artistColumn].textContent;
+			const track = row.cells[trackColumn].textContent;
+			currentTrackLabel.textContent = `${artist} - ${track}`;
+		}
+	});
+	playBtn.addEventListener('click', () => {
+		playTrack(playBtn.dataset.src);
+
+		const row = playBtn.closest('tr');
+		const artist = row.cells[artistColumn].textContent;
+		const track = row.cells[trackColumn].textContent;
+		currentTrackLabel.textContent = `${artist} - ${track}`;
 	});
 });
 
