@@ -13,7 +13,7 @@
 <body>
 	<h1>My Music</h1>
 	<div class="page">
-	<p style="text-align: center;">Hi, I make music under the name 3.Ndangered and this is some music I made.</p>
+	<p style="text-align: center;">Hi, I make music as 3.Ndangered and this is some of the music I made.<br> It is a pile of good, bad and experimental stuff.</p>
 	<table id="playlist">
 		<colgroup>
 			<col style="width: 5%">
@@ -26,14 +26,15 @@
 				<th>Play</th>
 				<th>Track</th>
 				<th>Artist</th>
-				<th>Download</th>
+				<th>File</th>
 			</tr>
 		</thead>
 		<tbody>
 			<?php
 			$dir = __DIR__ . '/files';
 			$files = array_merge(glob("$dir/*.mp3"), glob("$dir/*.wav"));
-			sort($files); // optional: sort alphabetically
+
+			sort($files); // sort alphabetically
 
 			foreach ($files as $file) {
 				$name = basename($file);
@@ -52,7 +53,7 @@
 				echo "<td><button class='play-btn' data-src='files/$name'>Play</button></td>";
 				echo "<td>$track</td>";
 				echo "<td>$artist</td>";
-				echo "<td><a href='music/$name' download>$ext</a></td>";
+				echo "<td><a href='files/$name' download>$ext</a></td>";
 				echo "</tr>";
 			}
 			?>
@@ -60,12 +61,16 @@
 	</table>
 
 	<div id="player-container">
-		<div id="current-track">Nothing playing</div>
+		<div id="above-player">
+			<div id="current-track">Nothing playing</div>
+			<input type="text" id="search" placeholder="Search...">
+		</div>
 		<audio id="player" controls></audio>
 	</div>
-	</div>
+	</div>	<!-- page -->
 
 	<script src="player.js"></script>
+	<script src="search.js"></script>
 </body>
 </html>
 

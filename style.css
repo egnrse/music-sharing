@@ -5,6 +5,7 @@
 	--bg-dark: #DDDDDF;
 
 	--accent: #949494;
+	--border: #ddd;
 
 	--focus-fg: var(--background);
 	--focus-bg: #87A;
@@ -12,20 +13,26 @@
 	--focus2-bg: #AD89B3;
 
 	--side-rem: calc(4vw);
+	--bottom-rem: 1rem;
 }
 /* handle small screens */
-@media (max-width: 480px) {
+@media (max-width: 550px) {
 	:root {
 		--side-rem: 0rem;
-	}
-	#player-container {
-	bottom: 0rem;
+		--bottom-rem: 0rem;
 	}
 }
 
 
-body { font-family: sans-serif; padding: 2rem var(--side-rem); background: var(--bg-dark); color: var(--main-text);}
+body {
+	font-family: sans-serif;
+	padding: 0rem var(--side-rem);
+	background: var(--bg-dark);
+	color: var(--main-text);
+	padding-bottom: 6rem;
+}
 h1 { text-align: center; }
+
 
 /* music table */
 table {
@@ -37,7 +44,7 @@ table {
 th, td {
 	padding: 0.8rem;
 	text-align: left;
-	border-bottom: 1px solid #ddd;
+	border-bottom: 1px solid var(--border);
 }
 tr:hover { background-color: var(--focus2-bg); color: var(--focus2-fg) }
 
@@ -56,7 +63,7 @@ a:hover { text-decoration: underline; }
 /* player container */
 #player-container {
 	position: fixed;
-	bottom: 1rem;
+	bottom: var(--bottom-rem);
 	left: var(--side-rem);
 	right: var(--side-rem);
 	width: auto;
@@ -76,9 +83,38 @@ a:hover { text-decoration: underline; }
 	border-radius: 1px;
 }
 
+#above-player {
+	width: 100%;
+	display: flex;
+	gap: 10px;
+}
 #current-track {
 	font-weight: bold;
 	margin-top: 0.3rem;
 	margin-left: 0.5rem;
+	flex: 10;
 }
 
+#search {
+	margin-top: 0.3rem;
+	margin-right: 0.5rem;
+	box-sizing: border-box;
+	color: var(--main-text);
+	background: var(--background);
+	border-radius: 1px;
+	border: solid 1px var(--border);
+	width: 6ch;
+	max-width: 8ch;
+	transition: width 0.3s ease;
+	flex: 1;
+}
+#search:hover {
+	color: var(--focus2-fg);
+	background: var(--focus2-bg);
+}
+#search:not(:placeholder-shown), #search:focus {
+	color: var(--main-text);
+	background: var(--background);
+	max-width: 350px;
+	flex: 10;
+}
