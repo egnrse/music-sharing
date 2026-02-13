@@ -48,6 +48,11 @@
 					$artist = 'Unknown';
 					$track = pathinfo($name, PATHINFO_FILENAME);
 				}
+				// escape qotes
+				$name = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
+				$track = htmlspecialchars($track, ENT_QUOTES, 'UTF-8');
+				$artist = htmlspecialchars($artist, ENT_QUOTES, 'UTF-8');
+				$ext = htmlspecialchars($ext, ENT_QUOTES, 'UTF-8');
 
 				echo "<tr>";
 				echo "<td><button class='play-btn' data-src='files/$name'>Play</button></td>";
@@ -55,6 +60,7 @@
 				echo "<td>$artist</td>";
 				echo "<td><a href='files/$name' download>$ext</a></td>";
 				echo "</tr>";
+				echo "\n";
 			}
 			?>
 		</tbody>
