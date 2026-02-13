@@ -3,8 +3,8 @@ const rows = document.querySelectorAll('#playlist tbody tr');
 const player = document.getElementById('player');
 const currentTrackLabel = document.getElementById('current-track');
 
-const artistColumn = 1
-const trackColumn = 2
+const artistColumn = 2
+const trackColumn = 1
 
 function playTrack(track) {
 	player.src = track;

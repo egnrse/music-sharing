@@ -1,5 +1,5 @@
-/* Main Colors */
 :root {
+	/* Main Colors */
 	--background: #F0F4FD;
 	--main-text: #004;
 	--bg-dark: #DDDDDF;
@@ -10,25 +10,35 @@
 	--focus-bg: #87A;
 	--focus2-fg: var(--focus-fg);
 	--focus2-bg: #AD89B3;
+
+	--side-rem: calc(4vw);
+}
+/* handle small screens */
+@media (max-width: 480px) {
+	:root {
+		--side-rem: 0rem;
+	}
+	#player-container {
+	bottom: 0rem;
+	}
 }
 
 
-body { font-family: sans-serif; padding: 2rem; background: var(--bg-dark); color: var(--main-text);}
+body { font-family: sans-serif; padding: 2rem var(--side-rem); background: var(--bg-dark); color: var(--main-text);}
 h1 { text-align: center; }
 
+/* music table */
 table {
 	width: 100%;
 	border-collapse: collapse;
 	box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-	background: var(--background)
+	background: var(--background);
 }
-
 th, td {
 	padding: 0.8rem;
 	text-align: left;
 	border-bottom: 1px solid #ddd;
 }
-
 tr:hover { background-color: var(--focus2-bg); color: var(--focus2-fg) }
 
 button.play-btn {
@@ -47,8 +57,8 @@ a:hover { text-decoration: underline; }
 #player-container {
 	position: fixed;
 	bottom: 1rem;
-	left: 2rem;
-	right: 2rem;
+	left: var(--side-rem);
+	right: var(--side-rem);
 	width: auto;
 	background: var(--background);
 	color: var(--main-text);

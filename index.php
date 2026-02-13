@@ -13,19 +13,25 @@
 <body>
 	<h1>My Music</h1>
 	<div class="page">
+	<p style="text-align: center;">Hi, I make music under the name 3.Ndangered and this is some music I made.</p>
 	<table id="playlist">
+		<colgroup>
+			<col style="width: 5%">
+			<col style="width: 35%">
+			<col style="width: 25%">
+			<col style="width: 5%">
+		</colgroup>
 		<thead>
 			<tr>
 				<th>Play</th>
-				<th>Artist</th>
 				<th>Track</th>
-				<th>Format</th>
+				<th>Artist</th>
 				<th>Download</th>
 			</tr>
 		</thead>
 		<tbody>
 			<?php
-			$dir = __DIR__ . '/music';
+			$dir = __DIR__ . '/files';
 			$files = array_merge(glob("$dir/*.mp3"), glob("$dir/*.wav"));
 			sort($files); // optional: sort alphabetically
 
@@ -43,11 +49,10 @@
 				}
 
 				echo "<tr>";
-				echo "<td><button class='play-btn' data-src='music/$name'>Play</button></td>";
-				echo "<td>$artist</td>";
+				echo "<td><button class='play-btn' data-src='files/$name'>Play</button></td>";
 				echo "<td>$track</td>";
-				echo "<td>$ext</td>";
-				echo "<td><a href='music/$name' download>Download</a></td>";
+				echo "<td>$artist</td>";
+				echo "<td><a href='music/$name' download>$ext</a></td>";
 				echo "</tr>";
 			}
 			?>
