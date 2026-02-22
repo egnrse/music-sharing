@@ -14,8 +14,12 @@ function setCurrentlyPlaying(row) {
 	const artist = row.cells[artistColumn].textContent;
 	const track = row.cells[trackColumn].textContent;
 	currentTrackLabel.textContent = `${artist} - ${track}`;
-	// update browser tab title
+	// browser tab title
 	document.title = `${artist} - ${track} | My Music`;
+	// add to url
+	const url = new URL(window.location);
+	url.searchParams.set('track', row.querySelector('.play-btn').dataset.src);
+	window.history.replaceState({}, '', url);
 }
 
 rows.forEach(row => {
@@ -35,6 +39,25 @@ rows.forEach(row => {
 
 		const row = playBtn.closest('tr');
 		setCurrentlyPlaying(row)
+	});
+});
+
+// auto play song on page load
+window.addEventListener('DOMContentLoaded', () => {
+	const params = new URLSearchParams(window.location.search);
+	const trackParam = params.get('track');
+
+	if (!trackParam) return;
+
+	rows.forEach(row => {
+		const playBtn = row.querySelector('.play-btn');
+		if (!playBtn) return;
+
+		if (playBtn.dataset.src === trackParam) {
+			playTrack(playBtn.dataset.src);
+			setCurrentlyPlaying(row)
+			return;
+		}
 	});
 });
 
