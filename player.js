@@ -1,10 +1,10 @@
-// audio player
+/// audio player
 const rows = document.querySelectorAll('#playlist tbody tr');
 const player = document.getElementById('player');
 const currentTrackLabel = document.getElementById('current-track');
 
-const artistColumn = 2
-const trackColumn = 1
+const artistColumn = 2;
+const trackColumn = 1;
 
 function playTrack(track) {
 	player.src = track;
@@ -38,7 +38,8 @@ rows.forEach(row => {
 	});
 });
 
-// playback modes
+
+/// playback modes
 const modeBtn = document.getElementById('play-mode-btn');
 
 const MODE_NORMAL = 0;
@@ -52,22 +53,17 @@ updateMode()	// set initial mode text/title
 function updateMode(){
 	if (currentMode === MODE_NORMAL) {
 		modeBtn.textContent = 'Norm';
-		modeBtn.title = 'Normal: Playback stops after the song'
+		modeBtn.title = 'Normal: Playback stops after the song';
 	}
 	else if (currentMode === MODE_LOOP) {
 		modeBtn.textContent = 'Loop';
-		modeBtn.title = 'Loop: Repeat the current song'
+		modeBtn.title = 'Loop: Repeat the current song';
 	}
 	else {
 		modeBtn.textContent = 'Rand';
-		modeBtn.title = 'Random: Play a random song next'
+		modeBtn.title = 'Random: Play a random song next';
 	}
 }
-
-modeBtn.addEventListener('click', () => {
-	currentMode = (currentMode + 1) % 3;
-	updateMode()
-});
 // play random row
 function playRandom() {
 	const randomIndex = Math.floor(Math.random() * rows.length);
@@ -75,10 +71,9 @@ function playRandom() {
 	const playBtn = row.querySelector('.play-btn');
 
 	playTrack(playBtn.dataset.src);
-	setCurrentlyPlaying(row)
+	setCurrentlyPlaying(row);
 }
-// when track ends
-player.addEventListener('ended', () => {
+function playNext() {
 	if (currentMode === MODE_LOOP) {
 		player.currentTime = 0;
 		player.play();
@@ -87,4 +82,32 @@ player.addEventListener('ended', () => {
 		playRandom();
 	}
 	// normal = do nothing
+}
+
+modeBtn.addEventListener('click', () => {
+	currentMode = (currentMode + 1) % 3;
+	updateMode();
 });
+// when track ends
+player.addEventListener('ended', () => {
+	playNext();
+});
+
+
+/// handle media buttons
+if ("mediaSession" in navigator) {
+	/*
+	// seems to be handled automatically
+	navigator.mediaSession.setActionHandler("play", () => {
+	});
+	navigator.mediaSession.setActionHandler("pause", () => {
+	});
+	*/
+	navigator.mediaSession.setActionHandler("nexttrack", () => {
+		playNext();
+	});
+	navigator.mediaSession.setActionHandler("previoustrack", () => {
+		player.currentTime = 0;
+		player.play();
+	});
+}
