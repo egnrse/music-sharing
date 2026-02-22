@@ -31,37 +31,37 @@
 		</thead>
 		<tbody>
 			<?php
-			$dir = __DIR__ . '/files';
-			$files = array_merge(glob("$dir/*.mp3"), glob("$dir/*.wav"));
+			//$dir = __DIR__ . '/files';
+			//$files = array_merge(glob("$dir/*.mp3"), glob("$dir/*.wav"));
 
-			sort($files); // sort alphabetically
+			//sort($files); // sort alphabetically
 
-			foreach ($files as $file) {
-				$name = basename($file);
-				$ext = pathinfo($file, PATHINFO_EXTENSION);
+			//foreach ($files as $file) {
+			//	$name = basename($file);
+			//	$ext = pathinfo($file, PATHINFO_EXTENSION);
 
-				// split Artist - Track
-				if (strpos($name, ' - ') !== false) {
-					list($artist, $trackNameWithExt) = explode(' - ', $name, 2);
-					$track = pathinfo($trackNameWithExt, PATHINFO_FILENAME);
-				} else {
-					$artist = 'Unknown';
-					$track = pathinfo($name, PATHINFO_FILENAME);
-				}
-				// escape qotes
-				$name = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
-				$track = htmlspecialchars($track, ENT_QUOTES, 'UTF-8');
-				$artist = htmlspecialchars($artist, ENT_QUOTES, 'UTF-8');
-				$ext = htmlspecialchars($ext, ENT_QUOTES, 'UTF-8');
+			//	// split Artist - Track
+			//	if (strpos($name, ' - ') !== false) {
+			//		list($artist, $trackNameWithExt) = explode(' - ', $name, 2);
+			//		$track = pathinfo($trackNameWithExt, PATHINFO_FILENAME);
+			//	} else {
+			//		$artist = 'Unknown';
+			//		$track = pathinfo($name, PATHINFO_FILENAME);
+			//	}
+			//	// escape qotes
+			//	$name = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
+			//	$track = htmlspecialchars($track, ENT_QUOTES, 'UTF-8');
+			//	$artist = htmlspecialchars($artist, ENT_QUOTES, 'UTF-8');
+			//	$ext = htmlspecialchars($ext, ENT_QUOTES, 'UTF-8');
 
-				echo "<tr>";
-				echo "<td><button class='play-btn' data-src='files/$name'>Play</button></td>";
-				echo "<td>$track</td>";
-				echo "<td>$artist</td>";
-				echo "<td><a href='files/$name' download>$ext</a></td>";
-				echo "</tr>";
-				echo "\n";
-			}
+			//	echo "<tr>";
+			//	echo "<td><button class='play-btn' data-src='files/$name'>Play</button></td>";
+			//	echo "<td>$track</td>";
+			//	echo "<td>$artist</td>";
+			//	echo "<td><a href='files/$name' download>$ext</a></td>";
+			//	echo "</tr>";
+			//	echo "\n";
+			//}
 			?>
 		</tbody>
 	</table>
@@ -76,6 +76,7 @@
 	</div>
 	</div>	<!-- page -->
 
+	<script type="module" src="dist/table.js"></script>
 	<script type="module" src="dist/player.js"></script>
 	<script src="search.js"></script>
 </body>

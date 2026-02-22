@@ -1,0 +1,76 @@
+/**
+ * @file table.ts 
+ * @fileoverview load/manage the music table
+ * @author Elia
+ */
+import type { singleFile } from  "./types";
+import { Track } from "./Track.js";
+import { playTrack } from "./player.js";	// for connecting the play buttons
+
+
+/// VAR/CONST
+const MAX_STAGGER = 7;
+const STAGGER_DELAY = 7;
+
+
+/// FUNCTIONS
+/**
+ *	loads the main music table
+ */
+async function loadPage() {
+	//const data: singleFile[] = await fetch(`list_files.php?offset=${offset}&limit=${limit}`).then(r => r.json());
+	const data: singleFile[] = await fetch(`files.php`).then(r => r.json());
+	//totalFiles = data.total;
+	populateTable(data);
+	//renderPagination();
+}
+
+/**
+ * creates tr entries into the table from files
+ * @param files - the data for the table
+ */
+function populateTable(files: singleFile[]) {
+	const tbody = document.querySelector('#playlist tbody') as HTMLTableSectionElement;
+	if (!tbody) throw new Error("missing '#playlist tbody' element");
+	//tbody.innerHTML = '';
+	
+	// autoload song (preparations)
+	const params = new URLSearchParams(window.location.search);
+	const pathParam = params.get('path');
+
+	files.forEach((f, index) => {
+		const track = new Track(f.folder, f.name);
+		const tr = document.createElement('tr');
+		tr.innerHTML = `
+		<td><button class='play-btn' data-src='${track.path}'>Play</button></td>
+		<td>${track.name}</td>
+		<td>${track.artist}</td>
+		<td><a href='${track.path}' download>${track.ext}</a></td>
+		`;
+		
+		// play functionality
+		const playBtn = tr.querySelector('.play-btn')
+		if (!playBtn) throw new Error("missing '.play-btn' ButtonElement");
+		playBtn.addEventListener('click', () => {
+			playTrack(track);
+		});
+		tr.addEventListener('dblclick', () => {
+			playTrack(track);
+		});
+
+		// autoload song
+		if (pathParam && track.path === pathParam) {
+			playTrack(track, true);
+		}
+
+		// animation
+		const cappedIndex = (index > MAX_STAGGER) ? MAX_STAGGER : index;
+		tr.style.animationDelay = `${cappedIndex * STAGGER_DELAY}ms`;
+		tr.classList.add("fade-in");
+		tbody.appendChild(tr);
+	});
+}
+
+
+/// MAIN
+loadPage();

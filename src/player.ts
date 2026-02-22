@@ -168,41 +168,6 @@ function updateMode() {
 
 /// MAIN
 
-rows.forEach(row => {
-	// double-click to play the track
-	const playBtn = row.querySelector<HTMLButtonElement>('.play-btn');
-	if (!playBtn) throw new Error("missing '.play-btn' ButtonElement");
-	row.addEventListener('dblclick', () => {
-		if (playBtn) {
-			playPath(playBtn.dataset.src as FilePath);
-		}
-	});
-	// click play button to play the track
-	playBtn.addEventListener('click', () => {
-		playPath(playBtn.dataset.src as FilePath);
-	});
-});
-
-
-
-// auto load song on page load
-window.addEventListener('DOMContentLoaded', () => {
-	const params = new URLSearchParams(window.location.search);
-	const pathParam = params.get('path');
-
-	if (!pathParam) return;
-
-	rows.forEach(row => {
-		const playBtn = row.querySelector<HTMLButtonElement>('.play-btn');
-		if (!playBtn) return;
-
-		if (playBtn.dataset.src === pathParam) {
-			playPath(playBtn.dataset.src as FilePath, true);
-			return;
-		}
-	});
-});
-
 
 // playback modes
 updateMode()	// set initial mode text/title
