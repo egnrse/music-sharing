@@ -28,6 +28,8 @@ if (!modeBtn) throw new Error("missing 'modeBtn' ButtonElement");
 if (!rows) throw new Error("missing '#playlist tbody tr' element");
 
 let currentMode: PlayMode = PlayMode.Norm;
+const playHistoryMaxLength = 500;
+let playHistory: Array<Track> = [];
 
 
 /// FUNCTIONS
@@ -55,6 +57,11 @@ function playTrack(track: Track, onlyLoad = false) {
 	}
 	else {
 		log(`loading '${track}'`, 1);
+	}
+
+	playHistory.push(track);
+	while (playHistory.length > playHistoryMaxLength) {
+		playHistory.shift;
 	}
 
 	// update currently playing
@@ -93,8 +100,13 @@ function playRandom() {
 }
 /**
  * play the next track
+ * @param force - force switch song
  */
-function playNext() {
+function playNext(force = false) {
+	if (force) {
+		playRandom();
+		return;
+	}
 	switch (currentMode) {
 		case PlayMode.Loop:
 			player.currentTime = 0;
@@ -192,10 +204,18 @@ if ("mediaSession" in navigator) {
 		player.pause();
 	});
 	navigator.mediaSession.setActionHandler("nexttrack", () => {
-		playNext();
+		playNext(true);
 	});
 	navigator.mediaSession.setActionHandler("previoustrack", () => {
-		player.currentTime = 0;
-		player.play();
+		if (player.currentTime > 30) {
+			player.currentTime = 0;
+			player.play();
+		}
+		else {
+			let _ = playHistory.pop(); // current song
+			let prevTrack = playHistory.pop();
+			if (prevTrack) playTrack(prevTrack);
+			else log("no previous track");
+		}
 	});
 }
