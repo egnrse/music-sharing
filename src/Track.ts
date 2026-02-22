@@ -13,12 +13,9 @@ export class Track {
 	name: string;
 	ext: string;
 
-	constructor(path: FilePath) {
-		this.path = path;
-		const parts = path.split("/");
-		this.dir = parts.slice(0, -1).join("/");	// everything except last
-		const base = parts[parts.length - 1];		// artist - track.extension
-
+	constructor(dir: string, base: string) {
+		this.path = `${dir}/${base}` as FilePath;
+		this.dir = dir;
 		const dotIndex = base.lastIndexOf(".");
 		this.ext = dotIndex >= 0 ? base.slice(dotIndex+1) : "";
 		const name = dotIndex >= 0 ? base.slice(0, dotIndex) : base;

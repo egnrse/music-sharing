@@ -49,7 +49,7 @@ function log(text: string, level = 1) {
  * @param track - the track object to play
  * @param onlyLoad - only loads the track, does not start playback (default false)
  */
-function playTrack(track: Track, onlyLoad = false) {
+export function playTrack(track: Track, onlyLoad = false) {
 	player.src = track.path;
 	if (!onlyLoad) {
 		log(`playing '${track}'`, 1);
@@ -72,6 +72,21 @@ function playTrack(track: Track, onlyLoad = false) {
 	const url = new URL(window.location.href);
 	url.searchParams.set('path', track.path);
 	window.history.replaceState({}, '', url);
+	if ("mediaSession" in navigator) {
+		navigator.mediaSession.metadata = new MediaMetadata({
+			title:  track.name,
+			artist:  track.artist,
+			//album: "The Ultimate Collection (Remastered)",
+			//artwork: [
+			//	{
+			//		src: "https://dummyimage.com/96x96",
+			//		sizes: "96x96",
+			//		type: "image/png",
+			//	},
+			//],
+		});
+		navigator.mediaSession.playbackState = onlyLoad ? "paused" : "playing";
+	}
 }
 /**
  * creates a Track from the given path and plays it
@@ -80,7 +95,10 @@ function playTrack(track: Track, onlyLoad = false) {
  * @return - the created Track object
  */
 function playPath(path: FilePath, onlyLoad = false) {
-	const track = new Track(path);
+	const parts = path.split("/");
+	const dir = parts.slice(0, -1).join("/");	// everything except last
+	const base = parts[parts.length - 1];		// artist - track.extension
+	const track = new Track(dir, base);
 	playTrack(track, onlyLoad);
 	return track;
 }
@@ -89,13 +107,17 @@ function playPath(path: FilePath, onlyLoad = false) {
  * play the track of a random row
  */
 function playRandom() {
-	if (rows.length === 0) return;
+	const rows = document.querySelectorAll('#playlist tbody tr');
+	if (!rows) throw new Error("missing '#playlist tbody tr' element");
+	if (rows.length === 0) {
+		log("no songs to select from randomly");
+		return;
+	}
 
 	const randomIndex = Math.floor(Math.random() * rows.length);
 	const row = rows[randomIndex];
 	const playBtn = row.querySelector<HTMLButtonElement>('.play-btn');
 	if (!playBtn) throw new Error("missing '.play-btn' ButtonElement");
-
 	playPath(playBtn.dataset.src as FilePath);
 }
 /**
