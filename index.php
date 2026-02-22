@@ -76,7 +76,7 @@
 	</div>
 	</div>	<!-- page -->
 
-	<script src="player.js"></script>
+	<script type="module" src="dist/player.js"></script>
 	<script src="search.js"></script>
 </body>
 </html>

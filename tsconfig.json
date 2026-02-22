@@ -1,0 +1,11 @@
+{
+	"compilerOptions": {
+		"target": "ES6",          // output JS version
+		"module": "ES6",          // for import/export syntax
+		"strict": true,           // enable type checking
+		"outDir": "./dist",       // compiled JS location
+		"rootDir": "./src",       // your TS source files
+		"sourceMap": true
+	},
+	"include": ["src/**/*"]
+}

@@ -1,2 +1,4 @@
 # ingore music files
 files/**
+# ignore compiled typescript files
+dist/**
