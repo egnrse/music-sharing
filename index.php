@@ -69,6 +69,7 @@
 	<div id="player-container">
 		<div id="above-player">
 			<div id="current-track">Nothing playing</div>
+			<button id="play-mode-btn" title="">Norm</button>
 			<input type="text" id="search" placeholder="Search...">
 		</div>
 		<audio id="player" controls></audio>

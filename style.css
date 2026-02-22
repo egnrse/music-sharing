@@ -33,6 +33,15 @@ body {
 }
 h1 { text-align: center; }
 
+button {
+	color: var(--main-text);
+	background: var(--accent);
+	border-radius: 1px;
+	cursor: pointer;
+}
+button:hover {
+	background: var(--focus-bg);
+}
 
 /* music table */
 table {
@@ -50,12 +59,8 @@ tr:hover { background-color: var(--focus2-bg); color: var(--focus2-fg) }
 
 button.play-btn {
 	padding: 0.3rem 0.6rem;
-	background: var(--accent);
 	border: none;
-	border-radius: 1px;
-	cursor: pointer;
 }
-button.play-btn:hover { background: var(--focus-bg); }
 
 a { color: #007BFF; text-decoration: none; }
 a:hover { text-decoration: underline; }
@@ -117,4 +122,12 @@ a:hover { text-decoration: underline; }
 	background: var(--background);
 	max-width: 350px;
 	flex: 10;
+}
+button#play-mode-btn {
+	margin-top: 0.3rem;
+	box-sizing: border-box;
+	border: solid 1px var(--border);
+	/*
+	border: none;
+	*/
 }
