@@ -43,6 +43,7 @@ button:hover {
 	background: var(--focus-bg);
 }
 
+
 /* music table */
 table {
 	width: 100%;
@@ -55,6 +56,15 @@ th, td {
 	text-align: left;
 	border-bottom: 1px solid var(--border);
 }
+th[data-sortable="true"] {
+	cursor: pointer;
+	user-select: none;
+}
+.sort-arrow {
+	padding-bottom: 5px;
+	font-size: 0.8em;
+	color: 555;
+}
 tr:hover { background-color: var(--focus2-bg); color: var(--focus2-fg) }
 
 button.play-btn {
@@ -64,6 +74,7 @@ button.play-btn {
 
 a { color: #007BFF; text-decoration: none; }
 a:hover { text-decoration: underline; }
+
 
 /* player container */
 #player-container {

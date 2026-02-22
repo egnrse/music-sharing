@@ -24,9 +24,9 @@
 		<thead>
 			<tr>
 				<th>Play</th>
-				<th>Track</th>
-				<th>Artist</th>
-				<th>File</th>
+				<th data-sortable="true" data-type="string">Track <span class="sort-arrow"></span></th>
+				<th data-sortable="true" data-type="string">Artist <span class="sort-arrow"></span></th>
+				<th data-sortable="true" data-type="string">File <span class="sort-arrow"></span></th>
 			</tr>
 		</thead>
 		<tbody>

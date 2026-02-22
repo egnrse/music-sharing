@@ -71,6 +71,63 @@ function populateTable(files: singleFile[]) {
 	});
 }
 
+/**
+ * enables sorting for columns
+ */
+function sorting() {
+	const table = document.getElementById("playlist") as HTMLTableElement;
+	if (!(table instanceof HTMLTableElement)) throw new Error("missing '#playlist' TableElement");
+	const headers = table.querySelectorAll("th");
+
+	headers.forEach((header, columnIndex) => {
+		let asc = true;
+		if (header.dataset.sortable !== "true") return;
+		const arrowSpan = header.querySelector(".sort-arrow");
+		if (!(arrowSpan instanceof HTMLElement)) throw new Error("missing '.sort-arrow' element");
+
+		header.addEventListener("click", () => {
+			const tbody = table.querySelector("tbody")!;
+			const rows = Array.from(tbody.querySelectorAll("tr"));
+
+			const type = header.dataset.type;
+
+			rows.sort((a, b) => {
+				const aCell = a.children[columnIndex];
+				const bCell = b.children[columnIndex];
+				if (!(aCell instanceof HTMLTableCellElement) || !(bCell instanceof HTMLTableCellElement)) return 0;
+				const valA = aCell.textContent?.trim() ?? "";
+				const valB = bCell.textContent?.trim() ?? "";
+
+				if (type === "number") {
+					return asc
+						? Number(valA) - Number(valB)
+						: Number(valB) - Number(valA);
+				}
+
+				return asc
+					? valA.localeCompare(valB)
+					: valB.localeCompare(valA);
+			});
+
+			// re-append sorted rows
+			rows.forEach(row => tbody.appendChild(row));
+
+			headers.forEach(h => {
+				const span = h.querySelector(".sort-arrow");
+				if (span instanceof HTMLElement) span.textContent = "";
+			});
+
+			// set current arrow
+			arrowSpan.textContent = asc ? "▲" : "▼";
+
+			asc = !asc;
+		});
+	});
+}
 
 /// MAIN
-loadPage();
+
+document.addEventListener("DOMContentLoaded", () => {
+	loadPage();
+	sorting();
+});
