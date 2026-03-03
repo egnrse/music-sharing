@@ -6,12 +6,22 @@
 
 import type { FilePath } from  "./types";
 
+export function escapeHtml(input: string): string {
+	return input
+		.replace(/&/g, "&amp;")
+		.replace(/</g, "&lt;")
+		.replace(/>/g, "&gt;")
+		.replace(/"/g, "&quot;")
+		.replace(/'/g, "&#039;");
+}
+
 export class Track {
 	path: FilePath;
-	dir: string;
-	artist: string;
-	name: string;
-	ext: string;
+	savePath: FilePath;
+	dir: string;	// directory where to find the file
+	artist: string;	// artist names
+	name: string;	// track title
+	ext: string;	// file extension
 
 	constructor(dir: string, base: string) {
 		this.path = `${dir}/${base}` as FilePath;
@@ -23,6 +33,8 @@ export class Track {
 		const [artist, ...trackParts] = name.split(" - ");
 		this.artist = artist;
 		this.name = trackParts.join(" - ");
+
+		this.savePath = escapeHtml(this.path) as FilePath;
 	}
 
 	toString(): string {

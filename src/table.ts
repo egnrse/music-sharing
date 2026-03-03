@@ -42,10 +42,10 @@ function populateTable(files: singleFile[]) {
 		const track = new Track(f.folder, f.name);
 		const tr = document.createElement('tr');
 		tr.innerHTML = `
-		<td><button class='play-btn' data-src='${track.path}'>Play</button></td>
+		<td><button class='play-btn' data-src='${track.savePath}'>Play</button></td>
 		<td>${track.name}</td>
 		<td>${track.artist}</td>
-		<td><a href='${track.path}' download>${track.ext}</a></td>
+		<td><a href='${track.savePath}' download>${track.ext}</a></td>
 		`;
 		
 		// play functionality

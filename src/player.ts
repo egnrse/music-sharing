@@ -189,6 +189,7 @@ if ("mediaSession" in navigator) {
 	});
 	navigator.mediaSession.setActionHandler("pause", () => {
 		player.pause();
+		navigator.mediaSession.playbackState = "paused";
 	});
 	navigator.mediaSession.setActionHandler("nexttrack", () => {
 		playNext(true);
