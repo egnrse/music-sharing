@@ -25,6 +25,11 @@ export class Track {
 		const [artist, ...trackParts] = name.split(" - ");
 		this.artist = artist;
 		this.name = trackParts.join(" - ");
+		if (this.name.length < 1) {
+			log(`Track: no artist: '${this.showName()}'`, 3);
+			this.name = this.artist;
+			this.artist = '';
+		}
 
 		this.savePath = escapeHtml(this.path) as FilePath;
 	}
@@ -32,7 +37,8 @@ export class Track {
 	 * print a nice name of the current song
 	 */
 	showName(): string {
-		return `${this.artist} - ${this.name}`;
+		if (this.artist.length > 0) return `${this.artist} - ${this.name}`;
+		else return `${this.name}`;
 	}
 
 	toString(): string {

@@ -76,7 +76,7 @@ export class Player {
 		}
 
 		// update currently playing
-		this.currentTrackLabel.textContent = `${track.artist} - ${track.name}`;
+		this.currentTrackLabel.textContent = track.showName();
 		// browser tab title
 		document.title = `${track.name} | My Music`;
 		// add to url
