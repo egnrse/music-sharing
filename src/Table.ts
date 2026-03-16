@@ -3,9 +3,9 @@
  * @fileoverview load/manage the music table
  * @author Elia
  */
-import type { singleFile } from  "./globals";
+import type { singleFile } from  "./globals.js";
+import { log } from  "./globals.js";
 import { Track } from "./Track.js";
-import { playTrack } from "./player.js";	// for connecting the play buttons
 
 
 /// VAR/CONST
@@ -43,6 +43,7 @@ export class Table {
 	 * @param trackList - the data for the table
 	 */
 	update(trackList:Track[]) {
+		log(`Table: update`, 3);
 		this.populateTable(trackList);
 		this.trackList = trackList;
 	}

@@ -4,16 +4,8 @@
  * @author Elia
  */
 
-import type { FilePath } from  "./globals";
-
-export function escapeHtml(input: string): string {
-	return input
-		.replace(/&/g, "&amp;")
-		.replace(/</g, "&lt;")
-		.replace(/>/g, "&gt;")
-		.replace(/"/g, "&quot;")
-		.replace(/'/g, "&#039;");
-}
+import type { FilePath } from  "./globals.js";
+import { log, escapeHtml } from  "./globals.js";
 
 export class Track {
 	path: FilePath;
@@ -36,8 +28,18 @@ export class Track {
 
 		this.savePath = escapeHtml(this.path) as FilePath;
 	}
+	/**
+	 * print a nice name of the current song
+	 */
+	showName(): string {
+		return `${this.artist} - ${this.name}`;
+	}
 
 	toString(): string {
-		return `${this.artist} - ${this.name}`;
+		return `Track: ${this.showName()}`;
+	}
+	equals(other: unknown): boolean {
+		if (!(other instanceof Track)) return false;
+		return this.artist == other.artist && this.name == other.name;
 	}
 }
