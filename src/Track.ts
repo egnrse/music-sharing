@@ -4,7 +4,7 @@
  * @author Elia
  */
 
-import type { FilePath } from  "./types";
+import type { FilePath } from  "./globals";
 
 export function escapeHtml(input: string): string {
 	return input
