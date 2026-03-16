@@ -34,7 +34,8 @@ export class Table {
 		this.tbody = this.table.querySelector("tbody") as HTMLTableSectionElement;
 		if (!this.tbody) throw new Error("Table: missing '#playlist tbody' element");
 
-		// enable sorting
+		// prepare/enable features
+		this.search()
 		this.sorting()
 	}
 
@@ -84,7 +85,7 @@ export class Table {
 
 	/**
 	 * enables sorting for columns
-	 * (if header.dataset.sortable is set)
+	 * (for columns that have header.dataset.sortable set)
 	 */
 	private sorting() {
 		const headers:NodeListOf<HTMLTableHeaderCellElement> = this.table.querySelectorAll("th");
@@ -131,6 +132,31 @@ export class Table {
 
 				asc = !asc;
 			});
+		});
+	}
+	/**
+	* enables searching
+	*/
+	private search() {
+		const searchInput = document.getElementById('search') as HTMLInputElement;
+		if (!searchInput) throw new Error("Table: missing '#search' InputElement");
+		let tbody = this.tbody;
+
+		searchInput.addEventListener('input', function() {
+			const filter = searchInput.value.toLowerCase();
+			const rows = tbody.getElementsByTagName('tr');
+
+			for (let i = 0; i < rows.length; i++) {
+				const cells = rows[i].getElementsByTagName('td');
+				let match = false;
+				for (let j = 1; j <= 2; j++) { // check Track and Artist columns
+					if (cells[j].textContent.toLowerCase().includes(filter)) {
+						match = true;
+						break;
+					}
+				}
+				rows[i].style.display = match ? '' : 'none';
+			}
 		});
 	}
 }

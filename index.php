@@ -45,7 +45,6 @@
 	</div>	<!-- page -->
 
 	<script type="module" src="dist/main.js"></script>
-	<script src="search.js"></script>
 </body>
 </html>
 
