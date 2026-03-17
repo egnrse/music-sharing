@@ -15,23 +15,9 @@
 	<div class="page">
 	<p style="text-align: center;">Hi, I make music as 3.Ndangered and this is some of the music I made.<br> It is a pile of good, bad and experimental stuff.</p>
 	<table id="playlist">
-		<colgroup>
-			<col style="width: 5%">
-			<col style="width: 35%">
-			<col style="width: 25%">
-			<col style="width: 5%">
-		</colgroup>
-		<thead>
-			<tr>
-				<th>Play</th>
-				<th data-sortable="true" data-type="string">Track <span class="sort-arrow"></span></th>
-				<th data-sortable="true" data-type="string">Artist <span class="sort-arrow"></span></th>
-				<th data-sortable="true" data-type="string">File <span class="sort-arrow"></span></th>
-			</tr>
-		</thead>
-		<tbody>
-		<!-- the music table -->
-		</tbody>
+		<colgroup><!-- colgroup will be replaced by js --></colgroup>
+		<thead><!-- thead will be replaced by js --></thead>
+		<tbody><!-- the music table --></tbody>
 	</table>
 
 	<div id="player-container">
