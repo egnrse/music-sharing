@@ -4,9 +4,12 @@
 //error_reporting(E_ALL);
 //ini_set('display_errors', 1);
 
-$folder = 'files';
-$fileTypes = ['mp3', 'wav'];
+$workingDir = '../';
+$baseDir = 'files/';			// where to search for music files (relating to $workingDir)
+$fileTypes = ['mp3', 'wav', 'flac'];	// which files to show
 
+
+/// FUNCTIONS
 function getFiles(string $folder, array $fileTypes): array {
 	$files = array();
 	$dir = opendir($folder);
@@ -14,7 +17,7 @@ function getFiles(string $folder, array $fileTypes): array {
 		if ( $currentFile == '.' or $currentFile == '..' ) {
 			continue;
 		}
-		$fullPath = $folder . '/' . $currentFile;
+		$fullPath = realpath($folder . '/' . $currentFile);
 		if (is_dir($fullPath)) {
 			// recursively get files from subfolders
 			$files = array_merge($files, getFiles($fullPath, $fileTypes));
@@ -33,16 +36,19 @@ function getFiles(string $folder, array $fileTypes): array {
 	return $files;
 }
 
-$files = getFiles($folder, $fileTypes);
+
+/// MAIN
+chdir($workingDir);
+$files = getFiles($baseDir, $fileTypes);
 
 // todo:
 // $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 100;
 // $offset = isset($_GET['offset']) ? (int)$_GET['offset'] : 0;
 // function to get a paginated list of files
-//function getPaginatedFiles(string $folder, array $allowedExtensions, int $offset, int $limit): array {
+//function getPaginatedFiles(string $baseDir, array $allowedExtensions, int $offset, int $limit): array {
 //	$files = [];
 //	$total = 0;
-//	foreach (getFiles($folder, $allowedExtensions) as $i => $file) {
+//	foreach (getFiles($baseDir, $allowedExtensions) as $i => $file) {
 //		if ($i >= $offset && $i < $offset + $limit) $files[] = $file;
 //		$total++;
 //	}

@@ -5,7 +5,12 @@ A webpage to share my music on, for my artproject [3.Ndangered](https://egnrse.e
 
 
 ## Usage
-You need `typescript` (`tsc`) and `php` installed on your system. (Install ts with eg. `npm install -g typescript`.)
+You need some packages installed on your system. (Install typescript with eg. `npm install -g typescript`.)
+- `typescript` (`tsc`) 
+- `php` 
+Optionally:
+- `ffmpeg` (for file duration)
+
 
 You can compile this project by running `tsc` in the root folder of this repo.  
 You can test it with eg. `php -S localhost:8000`. You should now see it on [http://localhost:8000](http://localhost:8000).

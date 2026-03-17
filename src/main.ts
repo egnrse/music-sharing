@@ -26,7 +26,7 @@ let trackList:Track[] = [];
 async function fetchFileList(): Promise<singleFile[]> {
 	log(`fetch: files.php`, 3);
 	//const data: singleFile[] = await fetch(`list_files.php?offset=${offset}&limit=${limit}`).then(r => r.json());
-	const data: singleFile[] = await fetch(`files.php`).then(r => r.json());
+	const data: singleFile[] = await fetch(`api/files.php`).then(r => r.json());
 	//totalFiles = data.total;
 	return data;
 }
