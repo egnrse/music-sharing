@@ -56,6 +56,9 @@ th, td {
 	text-align: left;
 	border-bottom: 1px solid var(--border);
 }
+th.textAlign-right, td.textAlign-right {
+	text-align: right;
+}
 th[data-sortable="true"] {
 	cursor: pointer;
 	user-select: none;

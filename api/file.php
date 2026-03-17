@@ -41,6 +41,7 @@ function getDuration($path) {
 /// MAIN
 chdir($workingDir);
 $path = saveGet('path');
+$path = urldecode($path);
 $realpath = securePath($path, $workingDir.$baseDir);
 
 // load db (cached)
@@ -68,7 +69,7 @@ $response = [
 	//"modified" => $modTime,				// unix timestamp
 	//"modified_human" => date("Y-m-d H:i:s", $modTime),
 	"duration" => $duration,			// song duration
-	"releasedate" => $releasedate,
+	"releaseDate" => $releasedate,
 	"tags" => $tags
 ];
 

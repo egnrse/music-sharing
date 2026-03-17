@@ -51,8 +51,27 @@ export const COLUMN_REC: Record<string, Column> = {
 		render: (track: Track) =>
 			`<a href='${track.savePath}' download>${track.ext}</a>`
 	},
+	duration: {
+		label: "Length",
+		width: "5%",
+		textAlign: "right",
+		sortable: true,
+		type: "string",
+		render: (track: Track) => `${track.duration}`
+	},
+	releaseDate: {
+		label: "Released",
+		width: "10%",
+		sortable: true,
+		type: "string",
+		render: (track: Track) => `${track.releaseDate}`
+	},
 };
-
+/** special data values */
+export const FIELD_VALUES = {
+	NOTLOADED: "(...)",	// data not loaded yet
+	EMPTY: "(empty)"			// missing or empty data 
+}
 
 /// FUNCTIONS
 /**
@@ -85,17 +104,30 @@ export function escapeHtml(input: string): string {
 /** object to store info about a table columns */
 export type Column = {
 	label: string;		// name at the top (header)
-	width?: string		// colgroup.width=
 	sortable?: boolean;	// data-sortable= (if the column is sortable, default=false)
 	type?: string;		// data-type=
+	width?: string;		// colgroup.style.*
+	textAlign?: string;	// supports 'right' (implemented using css, default=left)
 	render: (track:Track) => string;	// innerHTML= (how to render this column )
 };
 /** a string that holds a (server) filepath */
 export type FilePath = string & { __brand: "FilePath" };
-/** /files.php returns a list of this */
+/** /api/files.php returns a list of this */
 export interface singleFile {
 	name: string;
 	folder: string;
+}
+/** /api/file.php?path=files/file.mp3 returns this */
+export interface detailsFile {
+	name: string;
+	folder: string;
+	path: FilePath;
+	filename: string;
+	extension: string;
+	size: number;
+	duration: string;
+	releaseDate: string;
+	tags: string[];
 }
 /** playmode states */
 export enum PlayMode {

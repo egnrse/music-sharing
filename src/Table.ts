@@ -69,12 +69,12 @@ export class Table {
 		columns.forEach(c => {
 			const col = document.createElement("col")
 			col.style.width = c.width ?? "auto"
+			col.style.textAlign = c.textAlign ?? "auto"	// (does not get respected, also implemented using css class .textAlign-right)
 			colgroup.appendChild(col)
 		})
 		return colgroup;
 	}
 	private renderHead(columns:Column[]): HTMLTableSectionElement {
-		const track = new Track('files', "EN - Fighting Till We Can't.wav");
 		const thead = document.createElement('thead');
 		const tr = document.createElement('tr');
 		for (const c of columns) {
@@ -87,6 +87,7 @@ export class Table {
 				span.className = "sort-arrow";
 				th.appendChild(span);
 			}
+			if (c.textAlign?.toLowerCase() == "right") th.classList.add("textAlign-right");
 			tr.appendChild(th)
 		}
 		thead.appendChild(tr)
@@ -97,8 +98,10 @@ export class Table {
 		for (const c of columns) {
 			const td = document.createElement("td")
 			td.innerHTML = c.render(track)
+			if (c.textAlign?.toLowerCase() == "right") td.classList.add("textAlign-right");
 			tr.appendChild(td)
 		}
+		log(`Table(row): ${tr.innerHTML}`, 5);
 		return tr;
 	}
 	/**
