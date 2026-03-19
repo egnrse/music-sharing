@@ -15,9 +15,11 @@ export class Track {
 	name: string;		// track title
 	ext: string;		// file extension
 
-	duration: string = FIELD_VALUES.NOTLOADED;
-	releaseDate: string = FIELD_VALUES.NOTLOADED;
-	tags: string[] = [FIELD_VALUES.NOTLOADED];
+	duration: string = FIELD_VALUES.NOTLOADED;		// duration of track
+	releaseDate: string = FIELD_VALUES.NOTLOADED;	// release date of the track
+	tags: string[] = [FIELD_VALUES.NOTLOADED];		//dev unused
+
+	private listeners: (() => void)[] = []			// functions to call on field changes
 
 	constructor(dir: string, base: string) {
 		this.path = `${dir}/${base}`.replace(/\/{2,}/g, '/') as FilePath;
@@ -50,7 +52,19 @@ export class Track {
 
 		this.releaseDate = data.releaseDate;
 		this.tags = data.tags;
+
+		this.notify();	// update subscribers
 	}
+
+	/** add a function as a listener (which will get called on field changes) */
+	subscribe(fn: () => void) {
+		this.listeners.push(fn)
+	}
+	/** notify subscribers of a field change */
+	private notify() {
+		this.listeners.forEach(fn => fn())
+	}
+
 	/**
 	 * print a nice name of the current song
 	 */

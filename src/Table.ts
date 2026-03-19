@@ -97,9 +97,14 @@ export class Table {
 		const tr = document.createElement('tr');
 		for (const c of columns) {
 			const td = document.createElement("td")
-			td.innerHTML = c.render(track)
-			if (c.textAlign?.toLowerCase() == "right") td.classList.add("textAlign-right");
-			tr.appendChild(td)
+			// the function to call, on track changes
+			const renderCell = () => {
+				td.innerHTML = c.render(track)
+				if (c.textAlign?.toLowerCase() == "right") td.classList.add("textAlign-right");
+			};
+			renderCell();
+			track.subscribe(renderCell);
+			tr.appendChild(td);
 		}
 		log(`Table(row): ${tr.innerHTML}`, 5);
 		return tr;
