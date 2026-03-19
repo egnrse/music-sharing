@@ -103,7 +103,7 @@ export class Table {
 				if (c.textAlign?.toLowerCase() == "right") td.classList.add("textAlign-right");
 			};
 			renderCell();
-			track.subscribe(renderCell);
+			if (!c.noUpdate) track.subscribe(renderCell);
 			tr.appendChild(td);
 		}
 		log(`Table(row): ${tr.innerHTML}`, 5);

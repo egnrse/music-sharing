@@ -25,6 +25,7 @@ window.VERBOSE = 3;
 export const COLUMN_REC: Record<string, Column> = {
 	play: {
 		label: "Play",
+		noUpdate: true,
 		width: "5%",
 		render: (track: Track) => 
 			`<button class='play-btn' data-src='${track.savePath}'>Play</button>`
@@ -104,6 +105,7 @@ export function escapeHtml(input: string): string {
 /** object to store info about a table columns */
 export type Column = {
 	label: string;		// name at the top (header)
+	noUpdate?: boolean;	// do not update the cell on track changes (default=false)
 	sortable?: boolean;	// data-sortable= (if the column is sortable, default=false)
 	type?: string;		// data-type=
 	width?: string;		// colgroup.style.*
