@@ -13,7 +13,7 @@ $db = "$baseDir/data.json";
 function saveGet(string $arg): string {
 	// validate input
 	$rawGet = $_GET[$arg] ?? '';
-	if ($rawGet === '' || str_contains($rawGet, '..')) {
+	if ($rawGet === '' || str_contains($rawGet, '../')) {
 		http_response_code(400);
 		echo json_encode(["error" => "invalid input", "$arg" => "$rawGet"]);
 		exit;

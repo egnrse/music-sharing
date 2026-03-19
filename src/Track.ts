@@ -42,7 +42,7 @@ export class Track {
 	}
 	/** fetch more data about this track from the server */
 	private async fetchData() {
-		const data:detailsFile = await fetch(`api/file.php?path=${this.path}`).then(r => r.json());
+		const data:detailsFile = await fetch(`api/file.php?path=${encodeURIComponent(this.path)}`).then(r => r.json());
 		log(`Track: loaded ${JSON.stringify(data,null,2)}`, 5);
 
 		const [hms] = data.duration.split(".");	// HH:MM:SS.ms (removes the .ms)
