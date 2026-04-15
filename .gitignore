@@ -1,4 +1,9 @@
 # ingore music files
 files/**
 # ignore compiled typescript files
-dist/**
+*/dist/**
+
+
+# node
+package-lock.json
+node_modules/**
