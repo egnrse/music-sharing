@@ -8,6 +8,7 @@ pnpm devF		# compile the frontend in watch mode
 
 pnpm test		# list all ts errors (using --noemit)
 pnpm build		# compiles all ts
+pnpm cli		# interactively add/edit song in the database
 
 # the servers verbosity can be changed
 VERBOSE=3 pnpm dev
