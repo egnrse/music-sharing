@@ -123,7 +123,12 @@ router.get("/details", (req, res) => {
 		}
 		
 		if (!dataCache) {
-			dataCache = JSON.parse(fs.readFileSync(DB_PATH, "utf-8"));
+			try {
+				dataCache = JSON.parse(fs.readFileSync(DB_PATH, "utf-8"));
+			} catch (err: any) {
+				console.warn(`[WARN] failed to parse database file: ${err}`)
+				dataCache = {}
+			}
 		}
 		// file info
 		const info = path.parse(fullPath);
@@ -147,7 +152,8 @@ router.get("/details", (req, res) => {
 		};
 		res.json(response);
 	} catch (err: any) {
-		res.status(500).json({ error: err.message || "internal error" });
+		res.status(500).json({ error: "internal error" });
+		console.error(`[ERROR] ${err.message}`)
 	}
 });
 router.get("/file.php", (req, res) => {
