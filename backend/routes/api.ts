@@ -10,7 +10,7 @@ import path from "path";
 import { PROJECT_ROOT,PUBLIC_PATH,FILES_PATH,FILE_TYPES,DB_FILE } from "../globals.js";
 import { log, loadDB } from  "../globals.js";
 import Song from "../Song.js";
-import type { SongInterface, SongKey } from "../Song.js";
+import type { SongInterface, SongKey } from "../shared.js"
 
 
 /// VAR/CONST

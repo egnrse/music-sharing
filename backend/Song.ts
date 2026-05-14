@@ -8,24 +8,8 @@ import fs from "fs";
 
 import { log } from  "./globals.js";
 import DateString from "./DateString.js";
+import type { SongInterface, SongKey } from "./shared.js"
 
-
-export interface SongInterface {
-	id: string;
-	name: string;
-	path: string;
-	ext: string;
-
-	artist?: string;
-	releaseDate?: string;
-	files?: SongInterface[]|string[];
-
-	length?: number;
-	size?: number;
-	notes?: string;
-	tags: string[];
-}
-export type SongKey = keyof SongInterface;
 
 export default class Song {
 	id: string;
