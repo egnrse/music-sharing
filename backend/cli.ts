@@ -3,10 +3,10 @@
 import fs from "fs"
 import path from "path"
 import enquirer from "enquirer"
-//import { parseFile } from "music-metadata"
 
 import { PROJECT_ROOT,PUBLIC_PATH,FILES_PATH,FILE_TYPES,DB_FILE } from "./globals.js";
 import { log } from  "./globals.js"
+import DateString from "./DateString.js"
 import Song from "./Song.js"
 
 
@@ -66,24 +66,6 @@ function groupFiles(files: string[]) {
 	return map
 }
 
-// extract basic metadata
-async function getMetadata(file: string) {
-	try {
-		const meta = await parseFile(file)
-		return {
-			duration: meta.format.duration ?? 0,
-			artist: meta.common.artist ?? "",
-			name: meta.common.title ?? ""
-		}
-	} catch {
-		const name = path.basename(file)
-		const match = name.match(/^(.*?)\s*-\s*(.*)$/)
-		if(!match) {
-			return { duration: 0, artist: "", name: "", }
-		}
-		return { duration: 0, artist: match[1].trim(), name: match[2].trim(), }
-	}
-}
 */
 
 // interactively edit a songs fields
@@ -95,22 +77,22 @@ async function editSong(song: Song): Promise<Song> {
 		choices: [
 			{ name: "artist", message: "artist", initial: song.artist },
 			{ name: "name", message: "song name", initial: song.name },
-			{ name: "releaseDate", message: "release date", initial: song.releaseDate },
+			{ name: "releaseDate", message: "release date", initial: song.releaseDate.toString() },
 			{ name: "notes", message: "notes", initial: song.notes },
 		],
 	});
 	try {
 		const edited = await edit.run();
-		const result: Song = {
-			...song,
-			...edited,
-		};
-		if (Song.validate(result)) return result;
-		else throw new Error(`'result' is not a valid Song`);
+
+		song.name = edited.name;
+		song.artist = edited.artist;
+		try { song.releaseDate = new DateString(edited.releaseDate);}
+		catch (err) { log(`${err} (expected: yyyy-mm-dd)`,3);}
+		song.notes = edited.notes;
 	} catch (err) {
 		log(`edit aborted (${err})`, 5);
-		return song;
 	}
+	return song;
 }
 
 // interactively select a song from a list
@@ -145,6 +127,7 @@ async function main() {
 		// TODO: try auto grouping
 		//
 		const song = new Song(file);
+		await song.populate();
 		newSongs[song.id] = song;
 		//log(`${newSongs.at(-1)?.artist} - ${newSongs.at(-1)?.name}`);
 	}

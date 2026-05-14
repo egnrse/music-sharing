@@ -6,6 +6,7 @@
 import path from "path"
 
 import { log } from  "./globals.js"
+import DateString from "./DateString.js"
 
 export default class Song {
 	id: string;
@@ -15,10 +16,10 @@ export default class Song {
 	
 	// Optional fields:
 	artist: string = "";
-	releaseDate: string = "";
+	releaseDate: DateString = new DateString(null, true);
 	files: Song[] = [];
 
-	length: number = -1;
+	length: number = -1;	// in seconds
 	notes: string = "";
 	tags: string[] = [];
 
@@ -36,6 +37,17 @@ export default class Song {
 			const parts = base.split(SEPERATOR).map(s => s.trim());
 			this.name = parts.slice(1).join(SEPERATOR) ?? "";
 			this.artist = parts[0] ?? "";
+		}
+	}
+
+	/** automatically fill some fields of this */
+	async populate() {
+		try {
+			const { parseFile } = await import("music-metadata");
+			const metadata = await parseFile(this.path);
+			this.length = metadata.format.duration ?? -1;
+		} catch (err) {
+			log(`failed to get song lenght: ${err}`, 5);
 		}
 	}
 
@@ -62,6 +74,14 @@ export default class Song {
 
 	toString(): string {
 		return `Song: ${this.showName()}`;
+	}
+	toJSON(): any {
+		const obj = { ...this };
+
+		return {
+			...obj,
+			releaseDate: this.releaseDate.toString(),
+		};
 	}
 	equals(other: unknown): boolean {
 		if (!(other instanceof Song)) return false;

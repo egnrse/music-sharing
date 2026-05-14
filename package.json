@@ -32,5 +32,8 @@
   },
   "devDependencies": {
     "tsx": "^4.21.0"
+  },
+  "optionalDependencies": {
+    "music-metadata": "^11.12.3"
   }
 }

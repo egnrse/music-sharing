@@ -20,7 +20,6 @@ export const FILES_PATH = path.resolve(PROJECT_ROOT, 'files');		// path to the m
 export const FILE_TYPES = ["mp3", "wav", "flac"];					// media types to search for
 export const DB_FILE = path.join(PROJECT_ROOT, "./files/data.json")	// media file database
 
-
 /// FUNCTIONS
 /**
  * custom log function
