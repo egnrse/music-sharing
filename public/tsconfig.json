@@ -10,6 +10,7 @@
 		/* If transpiling with TypeScript: */
 		"module": "es6",
 		"rootDir": "./src",       // your TS source files
+		"outDir": "dist",
 
 		/* If your code runs in the DOM: */
 		"lib": ["es2022", "dom", "dom.iterable"],

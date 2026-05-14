@@ -17,7 +17,7 @@ export const logConfig = {
 
 /// TYPES
 /** api interface */
-export type fileAPI = Partial<Record<SongKey,any>>[];
+export type filesAPI = Partial<Record<SongKey,any>>[];
 export type detailsAPI = SongInterface[];
 
 

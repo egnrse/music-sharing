@@ -15,7 +15,6 @@
 		"noImplicitOverride": true,
 
 		/* If transpiling with TypeScript: */
-		"outDir": "dist",
 		"sourceMap": true,
 	},
 	"exclude": ["dist", "node_modules"]
