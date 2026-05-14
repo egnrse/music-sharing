@@ -1,25 +1,15 @@
 {
+	"extends": "../base-tsconfig.json",
 	"compilerOptions": {
 		/* Base Options: */
-		"esModuleInterop": true,
-		"skipLibCheck": true,
 		"target": "es6",
-		"allowJs": true,
-		//"resolveJsonModule": true,
-		"moduleDetection": "force",
-		"isolatedModules": true,
-		"verbatimModuleSyntax": true,
 
 		/* Strictness */
-		"strict": true,
-		//"noUncheckedIndexedAccess": true,
-		"noImplicitOverride": true,
+		"noUncheckedIndexedAccess": false,
 
 		/* If transpiling with TypeScript: */
 		"module": "es6",
 		"rootDir": "./src",       // your TS source files
-		"outDir": "dist",
-		"sourceMap": true,
 
 		/* If your code runs in the DOM: */
 		"lib": ["es2022", "dom", "dom.iterable"],

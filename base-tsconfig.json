@@ -1,0 +1,23 @@
+{
+	"compilerOptions": {
+		/* Base Options: */
+		"esModuleInterop": true,
+		"skipLibCheck": false,
+		"allowJs": false,
+		"moduleDetection": "force",
+		"isolatedModules": true,
+		"verbatimModuleSyntax": true,
+		"resolveJsonModule": true,
+
+		/* Strictness */
+		"strict": true,
+		"noUncheckedIndexedAccess": true,
+		"noImplicitOverride": true,
+
+		/* If transpiling with TypeScript: */
+		"outDir": "dist",
+		"sourceMap": true,
+	},
+	"exclude": ["dist", "node_modules"]
+}
+
