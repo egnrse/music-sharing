@@ -5,22 +5,12 @@ import path from "path";
 import enquirer from "enquirer";
 
 import { PROJECT_ROOT,PUBLIC_PATH,FILES_PATH,FILE_TYPES,DB_FILE } from "./globals.js";
-import { log } from  "./globals.js";
+import { log, loadDB } from  "./globals.js";
 import DateString from "./DateString.js";
 import Song from "./Song.js";
 
 
 /// FUNCTIONS
-function loadDB(file: string): Record<string, Song> {
-	log(`loadDB: ${file}`, 5);
-	if (!fs.existsSync(file)) return {}
-	const raw = JSON.parse(fs.readFileSync(file, "utf-8"));
-	const db: Record<string, Song> = {};
-	for (const [id, value] of Object.entries(raw)) {
-		db[id] = Song.from(value);
-	}
-	return db;
-}
 function saveDB(file: string, db: Record<string, Song>) {
 	log(`saveDB: ${file}`, 5);
 	fs.writeFileSync(file, JSON.stringify(db, null, 2))
@@ -112,7 +102,9 @@ async function selectSong(songs: Record<string, Song>): Promise<string> {
 
 /// MAIN
 async function main() {
-	const db: Record<string, Song> = loadDB(DB_FILE);
+	let db: Record<string, Song> = {};
+	try { db = loadDB(DB_FILE); }
+	catch (err) { console.warn(`[WARN] ${err}`); }
 	const allFiles: string[] = getFiles(FILES_PATH, FILE_TYPES, PROJECT_ROOT);
 	log(`read files:\n${allFiles.map(p => `\t- ${p}`).join("\n")}`, 6);
 

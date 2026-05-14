@@ -9,6 +9,24 @@ import fs from "fs";
 import { log } from  "./globals.js";
 import DateString from "./DateString.js";
 
+
+export interface SongInterface {
+	id: string;
+	name: string;
+	path: string;
+	ext: string;
+
+	artist?: string;
+	releaseDate?: string;
+	files?: SongInterface[]|string[];
+
+	length?: number;
+	size?: number;
+	notes?: string;
+	tags: string[];
+}
+export type SongKey = keyof SongInterface;
+
 export default class Song {
 	id: string;
 	name: string;	// title of this Song
@@ -73,6 +91,17 @@ export default class Song {
 		//}
 	}
 
+	/** searches for songs in this with matching id */
+	getSong(id: string): Song|null {
+		if (this.id == id) return this;
+		for (const s of this.files ?? []) {
+			const result = s.getSong(id);
+			if (result) {
+				return result;
+			}
+		}
+		return null;
+	}
 	/** fetches a list of paths recursively */
 	getPaths(): string[] {
 		const paths = new Set<string>();
@@ -80,7 +109,6 @@ export default class Song {
 		for (const s of this.files ?? []) {
 			for (const p of s.getPaths()) paths.add(p);
 		}
-		//paths.add(...s.getPath());
 		return [...paths];
 	}
 
@@ -97,13 +125,27 @@ export default class Song {
 	toString(): string {
 		return `Song: ${this.showName()}`;
 	}
-	toJSON(): any {
+	toJSON({filtered = true}: {filtered?: boolean} = {}): SongInterface {
 		const obj = { ...this };
 
-		return {
+		let json = {
 			...obj,
 			releaseDate: this.releaseDate.toString(),
+			files: this.files?.map(f => f.toJSON()),
 		};
+		// remove empty fields
+		if (filtered) {
+			const filtered =  Object.fromEntries(
+				Object.entries(json).filter(([_, v]) =>
+					v != null &&
+						(!(Array.isArray(v)) || v.length > 0) &&
+						(typeof v !== "string" || v.trim() !== "")
+					)
+				) as SongInterface;
+			return filtered;
+		} else {
+			return json;
+		}
 	}
 	equals(other: unknown): boolean {
 		if (!(other instanceof Song)) return false;
@@ -150,13 +192,14 @@ export default class Song {
 		if (typeof data.ext !== "string") { log(`'data.ext' is not of type 'string' (${data.ext})`, 6); return false;}
 
 		// allowed Song fields
-		const allowed = new Set([
+		const ALLOWEDKEYS = new Set<SongKey>([
 			"id","name","path","ext",
 			"artist","releaseDate","files",
 			"length","size","notes","tags"
-		]);
+		] satisfies SongKey[]);
+
 		for (const key of Object.keys(data)) {
-			if (!allowed.has(key)) {
+			if (!ALLOWEDKEYS.has(key as SongKey)) {
 				log(`unexpected field: ${key}`, 6);
 				return false;
 			}
@@ -165,3 +208,4 @@ export default class Song {
 		return true;
 	}
 }
+

@@ -6,82 +6,99 @@
 import { Router } from "express";
 import fs from "fs";
 import path from "path";
-import { execSync } from "child_process";
 
 import { PROJECT_ROOT,PUBLIC_PATH,FILES_PATH,FILE_TYPES,DB_FILE } from "../globals.js";
-import { log } from  "../globals.js";
+import { log, loadDB } from  "../globals.js";
+import Song from "../Song.js";
+import type { SongInterface, SongKey } from "../Song.js";
 
 
 /// VAR/CONST
 const router = Router();
-let dataCache: Record<string, any> | null = null;
+let dataCache: Record<string, Song> | null = null;
 
 
 /// FUNCTIONS
-// recursively collect files
-function getFiles(folder: string, baseDir: string): { name: string; folder: string }[] {
-	let files: { name: string; folder: string }[] = [];
-
-	const entries = fs.readdirSync(folder);
-
-	for (const entry of entries) {
-		if (entry === "." || entry === "..") continue;
-
-		const fullPath = path.join(folder, entry);
-		const stat = fs.statSync(fullPath);
-
-		if (stat.isDirectory()) {
-			// recurse into subfolder
-			files = files.concat(getFiles(fullPath, baseDir));
-		} else {
-			const ext = path.extname(entry).toLowerCase().replace(".", "");
-
-			if (FILE_TYPES.includes(ext)) {
-				const relative = path.relative(baseDir, folder)
-				files.push({
-					name: entry,
-					folder: relative,
-				});
-			}
+/**  */
+function saveLoadDB(dataCache: Record<string, Song>|null): Record<string, Song> {
+	if (!dataCache) {
+		try {
+			dataCache = loadDB(DB_FILE);
+		} catch (err: any) {
+			console.error(`[ERR] loadDB: ${err}`)
+			dataCache = {}
 		}
 	}
-
-	return files;
+	return dataCache;
 }
 
-// get duration via ffmpeg
-function getDuration(filePath: string): string {
-	try {
-		const cmd = `ffmpeg -i ${JSON.stringify(filePath)} 2>&1 | grep 'Duration' | cut -d ' ' -f 4 | sed s/,//`;
-		return execSync(cmd).toString().trim();
-	} catch {
-		return "";
+/** prepare a /api/files entry (showing only specific columns) */
+function createEntry(song: Song, columns: SongKey[]): Partial<Record<SongKey,any>> {
+	const idKey = "id";
+	const filesKey = "files";
+	
+	let entry: Partial<Record<SongKey,any>> = {};
+	entry[idKey] = song[idKey];	// always add 'id'
+	const sJSON = song.toJSON();
+	for (const col of columns) {
+		// handle 'files' recursively
+		if (col == filesKey) {
+			let filesList: Partial<Record<SongKey,any>>[] = [];
+			for (const file of song.files) {
+				filesList.push(createEntry(file, columns));
+			}
+			if (filesList.length > 0) entry[filesKey] = filesList;
+		}
+		// handle all other fields
+		else if (col in sJSON)
+			entry[col] = sJSON[col];
 	}
+	return entry;
 }
+
 
 /// GET /api/files \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+const filesParam = "col"
+const defaultCol: SongKey[] = ["path", "name", "artist", "releaseDate", "files"]
 router.get("/files", (req, res) => {
-	log(`GET ${req.originalUrl}`, 5);
+	log(`GET ${req.originalUrl}`, 3);
 	try {
-		const files = getFiles(FILES_PATH, PROJECT_ROOT);
-
-		res.json(files);
+		// get param
+		const raw = req.query[filesParam];
+		let param: SongKey[];
+		if (!raw) param = defaultCol;
+		else if (Array.isArray(raw)) param = raw.map(String) as SongKey[];
+		else param = [String(raw) as SongKey];
+		log(`param(${filesParam}): [${param}]`, 6);
+		
+		dataCache = saveLoadDB(dataCache);
+		
+		let response: Set<Partial<Record<SongKey,any>>> = new Set();
+		for (const s of Object.values(dataCache)) {
+			const entry = createEntry(s, param);
+			response.add(entry);
+		}
+		
+		const sending = [...response];
+		log(JSON.stringify(sending, null, "  "), 7);
+		res.json([...sending]);
 	} catch (err) {
 		res.status(500).json({ error: "failed to read files" });
+		console.error(`[ERROR] ${err}`)
 	}
 });
 router.get("/files.php", (req, res) => {
 	console.warn(`[DEPRECATED] redirect '/api/files.php' to '/api/files' (used by '${req.ip}')`);
 	// redirect permanently (301) or temporarily (302)
-	res.redirect(302, "/api/files");
+	const url = "/api/files?" + new URLSearchParams(req.query as any).toString();
+	res.redirect(302, url);
 });
 
 
 /// GET /api/details \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 const detailsParam = "path"
-const savePath = path.resolve(PROJECT_ROOT, FILES_PATH)
 router.get("/details", (req, res) => {
-	log(`GET ${req.originalUrl}`, 5);
+	log(`GET ${req.originalUrl}`, 3);
 	try {
 		// get param
 		const raw = req.query[detailsParam];
@@ -91,60 +108,45 @@ router.get("/details", (req, res) => {
 				detail: `${detailsParam} is required`
 			});
 		}
-
-		let param: string;
-		if (Array.isArray(raw)) {
-			param = String(raw[0]);
-			console.warn("[WARN] /api/details does not support arrays yet");
-		} else {
-			param = String(raw);
-		}
-		// check param
-		param = path.normalize(param);
-		const fullPath = path.resolve(PROJECT_ROOT, param);
-		if (!fullPath.startsWith(savePath)) {
-			return res.status(400).json({
-				error: `invalid '${detailsParam}'`,
-				detail: `${detailsParam}: '${param}'`
-			});
-		}
-		// does file exist?
-		if (!fs.existsSync(fullPath)) {
-			return res.status(404).json({
-				error: `file not found`,
-				detail: `${detailsParam}: '${param}'`
-			});
-		}
 		
-		if (!dataCache) {
-			try {
-				dataCache = JSON.parse(fs.readFileSync(DB_FILE, "utf-8"));
-			} catch (err: any) {
-				console.warn(`[WARN] failed to parse database file: ${err}`)
-				dataCache = {}
-			}
+		let param: string[];
+		if (Array.isArray(raw)) {
+			param = raw.map(String);
+		} else {
+			param = [String(raw)];
 		}
-		// file info
-		const info = path.parse(fullPath);
-		const stats = fs.statSync(fullPath);
-		const duration = getDuration(fullPath);
-
-		const filedata = dataCache?.[param] ?? {};
-		const releaseDate = filedata.releasedate;
-		const tags = filedata.tags ?? [];
-
-		const response = {
-			name: info.base,
-			folder: path.dirname(param),
-			path: param,
-			filename: info.name,
-			extension: info.ext.replace(".", ""),
-			size: stats.size,
-			duration,
-			releaseDate,
-			tags
-		};
-		res.json(response);
+		log(`param(${detailsParam}): [${param}]`, 6);
+		
+		dataCache = saveLoadDB(dataCache);
+		
+		const response: Set<SongInterface> = new Set();
+		//const id = param;
+		for (const id of param) {
+			let song: Song|null = null;
+			
+			// get song with id
+			if (id in dataCache) {
+				song = dataCache[id] ?? null;
+			} else {
+				for (const s of Object.values(dataCache)) {
+					const result = s.getSong(id);
+					if (result) {
+						song = result;
+						break;
+					}
+				}
+			}
+			if (song == null) {
+				return res.status(404).json({
+					error: `id not found`,
+					detail: `${detailsParam}: '${id}'`
+				});
+			}
+			response.add(song.toJSON());
+		}
+		const sending = [...response];
+		log(JSON.stringify(sending, null, "  "), 7);
+		res.json([...sending]);
 	} catch (err: any) {
 		res.status(500).json({ error: "internal error" });
 		console.error(`[ERROR] ${err.message}`)
@@ -155,6 +157,5 @@ router.get("/file.php", (req, res) => {
 	// redirect permanently (301) or temporarily (302)
 	const url = "/api/details?" + new URLSearchParams(req.query as any).toString();
 	res.redirect(302, url);
-	//res.redirect(302, "/api/details");
 });
 export default router;
