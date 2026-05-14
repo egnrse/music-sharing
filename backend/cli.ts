@@ -6,21 +6,7 @@ import enquirer from "enquirer"
 //import { parseFile } from "music-metadata"
 
 import { log } from  "./globals.js"
-
-// move to global
-type File = {
-	path: string
-	ext: string
-}
-type Song = {
-	name: string
-	artist: string
-	releaseDate: string
-	duration: number
-	notes?: string
-	tags?: string[]
-	files: File[]
-}
+import Song from "./Song.js"
 
 const PROJECT_ROOT = path.resolve(process.cwd());
 const SEARCH_DIR = path.join(PROJECT_ROOT, "files")
@@ -32,7 +18,12 @@ const DB_FILE = path.join(PROJECT_ROOT, "./files/data.json")
 function loadDB(file: string): Record<string, Song> {
 	log(`loadDB: ${file}`, 5);
 	if (!fs.existsSync(file)) return {}
-	return JSON.parse(fs.readFileSync(file, "utf-8"))
+	const raw = JSON.parse(fs.readFileSync(file, "utf-8"));
+	const db: Record<string, Song> = {};
+	for (const [id, value] of Object.entries(raw)) {
+		db[id] = Song.from(value);
+	}
+	return db;
 }
 function saveDB(file: string, db: Record<string, Song>) {
 	log(`saveDB: ${file}`, 5);
@@ -99,30 +90,6 @@ async function getMetadata(file: string) {
 }
 */
 
-// create a new Song from a file path
-// returns the new song object
-function newSong(filePath: string): Song {
-	log(`new Song: ${filePath}`, 6);
-	const SEPERATOR = " - ";
-	const base = path.basename(filePath, path.extname(filePath));
-	const parts = base.split(SEPERATOR).map(s => s.trim());
-
-	const file: File = { 
-		path: filePath,
-		ext: path.extname(filePath).slice(1),
-	};
-	const song: Song = {
-		name: parts.slice(1).join(SEPERATOR) ?? "",
-		artist: parts[0] ?? "",
-		releaseDate: "",
-		duration: 0,
-		notes: "",
-		tags: [],
-		files: [file],
-	};
-	return song;
-}
-
 // interactively edit a songs fields
 // returns the edited song
 async function editSong(song: Song): Promise<Song> {
@@ -138,10 +105,12 @@ async function editSong(song: Song): Promise<Song> {
 	});
 	try {
 		const edited = await edit.run();
-		return {
+		const result: Song = {
 			...song,
 			...edited,
 		};
+		if (Song.validate(result)) return result;
+		else throw new Error(`'result' is not a valid Song`);
 	} catch (err) {
 		log(`edit aborted (${err})`, 5);
 		return song;
@@ -157,7 +126,7 @@ async function selectSong(songs: Record<string, Song>): Promise<string> {
 		message: "select song to edit",
 		choices: Object.entries(songs).map(([key, s]) => ({
 			name: key,	// internal value
-			message: `${s.files[0]?.path ?? key}`,	// UI
+			message: `${s}`,	// UI
 		})),
 	});
 	return select.run();
@@ -169,12 +138,9 @@ async function main() {
 	const allFiles: string[] = getFiles(SEARCH_DIR, FILE_TYPES, PROJECT_ROOT);
 	log(`read files:\n${allFiles.map(p => `\t- ${p}`).join("\n")}`, 6);
 
-	const allDbFiles = new Set(
-		Object.values(db).flatMap(entry =>
-			(entry.files ?? []).map(f => f.path)
-		)
-	);
+	const allDbFiles = new Set(Object.values(db).flatMap(song => song.getPaths()));
 	log(`files in DB:\n${Array.from(allDbFiles).map(p => `\t- ${p}`).join("\n")}`, 6);
+
 	const notInDbFiles = allFiles.filter(f => !allDbFiles.has(f));
 	log(`files not in DB:\n${notInDbFiles.map(p => `\t- ${p}`).join("\n")}`, 5);
 
@@ -182,8 +148,8 @@ async function main() {
 	for (const file of notInDbFiles) {
 		// TODO: try auto grouping
 		//
-		const song = newSong(file);
-		newSongs[song.files[0]!.path] = song;
+		const song = new Song(file);
+		newSongs[song.id] = song;
 		//log(`${newSongs.at(-1)?.artist} - ${newSongs.at(-1)?.name}`);
 	}
 
@@ -192,7 +158,7 @@ async function main() {
 		console.log("Adding new Songs:")
 		for (const [key,song] of Object.entries(newSongs)) {
 			console.log(key);
-			console.log(`  ${song.artist} - ${song.name}`)
+			console.log(`  ${song}`)
 		}
 		let loop = true;
 		try {
@@ -246,7 +212,7 @@ async function main() {
 			case "list":
 				for (const [key,song] of Object.entries(db)) {
 					console.log(key);
-					console.log(`  ${song.artist} - ${song.name}`)
+					console.log(`  ${song}`)
 				}
 				break;
 			case "edit":
