@@ -3,22 +3,18 @@
  * @fileoverview main server file
  * @author Elia
  */
+
 import express from 'express';
 import path from 'path';
 
+import { PROJECT_ROOT,PUBLIC_PATH,FILES_PATH } from "./globals.js";
 import { log } from  "./globals.js";
 import apiRoute from "./routes/api.js";
 
 
 /// VAR/CONST
 const PORT = process.env.PORT ?? 3000;
-
 const app = express();
-
-// fetch some important project paths
-const PROJECT_ROOT = path.resolve(process.cwd());
-const PUBLIC_PATH = path.resolve(PROJECT_ROOT, 'public');
-const FILES_PATH = path.resolve(PROJECT_ROOT, 'files');
 
 
 /// ROUTING

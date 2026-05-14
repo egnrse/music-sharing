@@ -5,13 +5,9 @@ import path from "path"
 import enquirer from "enquirer"
 //import { parseFile } from "music-metadata"
 
+import { PROJECT_ROOT,PUBLIC_PATH,FILES_PATH,FILE_TYPES,DB_FILE } from "./globals.js";
 import { log } from  "./globals.js"
 import Song from "./Song.js"
-
-const PROJECT_ROOT = path.resolve(process.cwd());
-const SEARCH_DIR = path.join(PROJECT_ROOT, "files")
-const FILE_TYPES = ["mp3", "wav", "flac"];
-const DB_FILE = path.join(PROJECT_ROOT, "./files/data.json")
 
 
 /// FUNCTIONS
@@ -135,7 +131,7 @@ async function selectSong(songs: Record<string, Song>): Promise<string> {
 /// MAIN
 async function main() {
 	const db: Record<string, Song> = loadDB(DB_FILE);
-	const allFiles: string[] = getFiles(SEARCH_DIR, FILE_TYPES, PROJECT_ROOT);
+	const allFiles: string[] = getFiles(FILES_PATH, FILE_TYPES, PROJECT_ROOT);
 	log(`read files:\n${allFiles.map(p => `\t- ${p}`).join("\n")}`, 6);
 
 	const allDbFiles = new Set(Object.values(db).flatMap(song => song.getPaths()));

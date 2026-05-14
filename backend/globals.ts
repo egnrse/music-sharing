@@ -4,12 +4,22 @@
  * @author Elia
  */
 
+import path from 'path';
+
+
 /// CONST
 /**
  * how verbose the custom log function is (bigger means more)
  * can be overwritten in the environment with 'VERBOSE=n'
  */
 const VERBOSE = parseInt(process.env.VERBOSE ?? "3", 10);
+
+export const PROJECT_ROOT = path.resolve(process.cwd());			// root of the project
+export const PUBLIC_PATH = path.resolve(PROJECT_ROOT, 'public');	// path to the frontend
+export const FILES_PATH = path.resolve(PROJECT_ROOT, 'files');		// path to the media files
+export const FILE_TYPES = ["mp3", "wav", "flac"];					// media types to search for
+export const DB_FILE = path.join(PROJECT_ROOT, "./files/data.json")	// media file database
+
 
 /// FUNCTIONS
 /**

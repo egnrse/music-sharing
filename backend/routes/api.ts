@@ -8,18 +8,13 @@ import fs from "fs";
 import path from "path";
 import { execSync } from "child_process";
 
+import { PROJECT_ROOT,PUBLIC_PATH,FILES_PATH,FILE_TYPES,DB_FILE } from "../globals.js";
 import { log } from  "../globals.js";
 
+
 /// VAR/CONST
-const PROJECT_ROOT = path.resolve(process.cwd());
 const router = Router();
 let dataCache: Record<string, any> | null = null;
-
-// files
-const SEARCH_DIR = "files";
-const FILE_TYPES = ["mp3", "wav", "flac"];
-// details
-const DB_PATH = path.join(PROJECT_ROOT, "files/data.json");;
 
 
 /// FUNCTIONS
@@ -68,8 +63,7 @@ function getDuration(filePath: string): string {
 router.get("/files", (req, res) => {
 	log(`GET ${req.originalUrl}`, 5);
 	try {
-		const basePath = path.join(PROJECT_ROOT, SEARCH_DIR);
-		const files = getFiles(basePath, PROJECT_ROOT);
+		const files = getFiles(FILES_PATH, PROJECT_ROOT);
 
 		res.json(files);
 	} catch (err) {
@@ -85,7 +79,7 @@ router.get("/files.php", (req, res) => {
 
 /// GET /api/details \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 const detailsParam = "path"
-const savePath = path.resolve(PROJECT_ROOT, SEARCH_DIR)
+const savePath = path.resolve(PROJECT_ROOT, FILES_PATH)
 router.get("/details", (req, res) => {
 	log(`GET ${req.originalUrl}`, 5);
 	try {
@@ -124,7 +118,7 @@ router.get("/details", (req, res) => {
 		
 		if (!dataCache) {
 			try {
-				dataCache = JSON.parse(fs.readFileSync(DB_PATH, "utf-8"));
+				dataCache = JSON.parse(fs.readFileSync(DB_FILE, "utf-8"));
 			} catch (err: any) {
 				console.warn(`[WARN] failed to parse database file: ${err}`)
 				dataCache = {}
