@@ -3,7 +3,7 @@
  * @author Elia
  */
 
-import { log } from  "./globals.js"
+import { log } from  "./globals.js";
 
 export default class DateString {
 	year?: number;

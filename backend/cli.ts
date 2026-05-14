@@ -1,13 +1,13 @@
 #!/usr/bin/env ts-node
 
-import fs from "fs"
-import path from "path"
-import enquirer from "enquirer"
+import fs from "fs";
+import path from "path";
+import enquirer from "enquirer";
 
 import { PROJECT_ROOT,PUBLIC_PATH,FILES_PATH,FILE_TYPES,DB_FILE } from "./globals.js";
-import { log } from  "./globals.js"
-import DateString from "./DateString.js"
-import Song from "./Song.js"
+import { log } from  "./globals.js";
+import DateString from "./DateString.js";
+import Song from "./Song.js";
 
 
 /// FUNCTIONS

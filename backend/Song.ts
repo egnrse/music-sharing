@@ -3,10 +3,11 @@
  * @author Elia
  */
 
-import path from "path"
+import path from "path";
+import fs from "fs";
 
-import { log } from  "./globals.js"
-import DateString from "./DateString.js"
+import { log } from  "./globals.js";
+import DateString from "./DateString.js";
 
 export default class Song {
 	id: string;
@@ -20,6 +21,7 @@ export default class Song {
 	files: Song[] = [];
 
 	length: number = -1;	// in seconds
+	size: number = -1;		// in bytes
 	notes: string = "";
 	tags: string[] = [];
 
@@ -41,14 +43,34 @@ export default class Song {
 	}
 
 	/** automatically fill some fields of this */
-	async populate() {
+	async populate(recursive = true) {
+		// length
 		try {
 			const { parseFile } = await import("music-metadata");
 			const metadata = await parseFile(this.path);
 			this.length = metadata.format.duration ?? -1;
 		} catch (err) {
-			log(`failed to get song lenght: ${err}`, 5);
+			log(`failed to get song length: ${err}`, 4);
 		}
+		// size
+		try {
+			const stat = fs.statSync(this.path);
+			this.size = stat.size;
+		} catch (err) {
+			log(`failed to get file size: ${err}`, 4);
+		}
+
+		// recursion in parallel
+		if (recursive && this.files?.length) {
+			await Promise.all(
+				this.files.map((s) => s.populate(true))
+			);
+		}
+		//if (recursive) {
+		//	for (const s of this.files ?? []) {
+		//		s.populate(recursive);
+		//	}
+		//}
 	}
 
 	/** fetches a list of paths recursively */
@@ -131,7 +153,7 @@ export default class Song {
 		const allowed = new Set([
 			"id","name","path","ext",
 			"artist","releaseDate","files",
-			"length","notes","tags"
+			"length","size","notes","tags"
 		]);
 		for (const key of Object.keys(data)) {
 			if (!allowed.has(key)) {
