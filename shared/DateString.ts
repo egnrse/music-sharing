@@ -3,7 +3,7 @@
  * @author Elia
  */
 
-import { log } from  "./globals.js";
+import { log } from  "./shared.js";
 
 
 export default class DateString {

@@ -8,6 +8,7 @@ import fs from "fs";
 import path from 'path';
 
 import Song from './Song.js';
+import { logConfig } from  "./shared/shared.js";
 
 
 /// CONST
@@ -16,6 +17,7 @@ import Song from './Song.js';
  * can be overwritten in the environment with 'VERBOSE=n'
  */
 const VERBOSE = parseInt(process.env.VERBOSE ?? "3", 10);
+logConfig.VERBOSE = VERBOSE;
 
 export const PROJECT_ROOT = path.resolve(process.cwd());			// root of the project
 export const PUBLIC_PATH = path.resolve(PROJECT_ROOT, 'public');	// path to the frontend

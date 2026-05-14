@@ -1,17 +1,33 @@
 /**
- * @fileoverview implementation of the Song class
+ * @fileoverview implementation of the BaseSong class
  * @author Elia
  */
 
-import path from "path";
-import fs from "fs";
+//import path from "path";
+//import fs from "fs";
 
-import { log } from  "./globals.js";
-import DateString from "./shared/DateString.js";
-import type { SongInterface, SongKey } from "./shared/BaseSong.js"
+import { log } from  "./shared.js";
+import DateString from "./DateString.js";
+
+export interface SongInterface {
+	id: string;
+	name: string;
+	path: string;
+	ext: string;
+
+	artist?: string;
+	releaseDate?: string;
+	files?: SongInterface[]|string[];
+
+	length?: number;
+	size?: number;
+	notes?: string;
+	tags: string[];
+}
+export type SongKey = keyof SongInterface;
 
 
-export default class Song {
+export default class BaseSong {
 	id: string;
 	name: string;	// title of this Song
 	path: string;	// path to the play file
@@ -20,7 +36,7 @@ export default class Song {
 	// Optional fields:
 	artist: string = "";
 	releaseDate: DateString = new DateString(null, true);
-	files: Song[] = [];
+	files: BaseSong[] = [];
 
 	length: number = -1;	// in seconds
 	size: number = -1;		// in bytes
@@ -31,55 +47,18 @@ export default class Song {
 	constructor(filePath: string, name?: string, artist?: string) {
 		this.id = filePath;
 		this.path = filePath;
-		this.ext = path.extname(filePath).slice(1);
+		const parts = filePath.split(".");
+		this.ext = parts.length > 1 ? parts.pop()! : "";
 		
 		this.name = name ?? "";
 		this.artist = artist ?? "";
-		if (this.name.length == 0) {
-			const SEPERATOR = " - ";
-			const base = path.basename(filePath, path.extname(filePath));
-			const parts = base.split(SEPERATOR).map(s => s.trim());
-			this.name = parts.slice(1).join(SEPERATOR) ?? "";
-			this.artist = parts[0] ?? "";
-		}
-	}
-
-	/** automatically fill some fields of this */
-	async populate(recursive = true) {
-		// length
-		try {
-			const { parseFile } = await import("music-metadata");
-			const metadata = await parseFile(this.path);
-			this.length = metadata.format.duration ?? -1;
-		} catch (err) {
-			log(`failed to get song length: ${err}`, 4);
-		}
-		// size
-		try {
-			const stat = fs.statSync(this.path);
-			this.size = stat.size;
-		} catch (err) {
-			log(`failed to get file size: ${err}`, 4);
-		}
-
-		// recursion in parallel
-		if (recursive && this.files?.length) {
-			await Promise.all(
-				this.files.map((s) => s.populate(true))
-			);
-		}
-		//if (recursive) {
-		//	for (const s of this.files ?? []) {
-		//		s.populate(recursive);
-		//	}
-		//}
 	}
 
 	/** searches for songs in this with matching id */
-	getSong(id: string): Song|null {
+	getSong<T extends BaseSong>(this: T, id: string): T|null {
 		if (this.id == id) return this;
 		for (const s of this.files ?? []) {
-			const result = s.getSong(id);
+			const result = s.getSong(id) as T;
 			if (result) {
 				return result;
 			}
@@ -107,7 +86,7 @@ export default class Song {
 	}
 
 	toString(): string {
-		return `Song: ${this.showName()}`;
+		return `BaseSong: ${this.showName()}`;
 	}
 	toJSON({filtered = true}: {filtered?: boolean} = {}): SongInterface {
 		const obj = { ...this };
@@ -132,14 +111,11 @@ export default class Song {
 		}
 	}
 	equals(other: unknown): boolean {
-		if (!(other instanceof Song)) return false;
+		if (!(other instanceof BaseSong)) return false;
 		if (this.id !== other.id) return false;
 		if (this.name != other.name) return false;
 		if (this.path != other.path) return false;
 		if (this.ext != other.ext) return false;
-		
-		//if (this.artist != other.artist) return false;
-		//if (this.files.length !== other.files.length) return false;
 
 		const a = this.files.map(f => f.id).sort();
 		const b = other.files.map(f => f.id).sort();
@@ -149,11 +125,11 @@ export default class Song {
 		return true;
 	}
 
-	/** create a Song obj from data */
-	static from(data: any): Song {
-		if (!Song.validate(data)) throw new Error("invalid song data");
+	/** create a BaseSong obj from data */
+	static from(data: any): BaseSong {
+		if (!BaseSong.validate(data)) throw new Error("invalid song data");
 
-		const song = new Song(data.path, data.name);
+		const song = new BaseSong(data.path, data.name);
 		const { files, ...rest } = data;
 		// merge data into the song obj
 		Object.assign(
@@ -161,12 +137,12 @@ export default class Song {
 			rest
 		);
 		// handle recursion
-		song.files = (data.files ?? []).map((f: any) => Song.from(f));
+		song.files = (data.files ?? []).map((f: any) => BaseSong.from(f));
 
 		return song;
 	}
 
-	/** test if data has the minimum fields to be a Song */
+	/** test if data has the minimum fields to be a BaseSong */
 	static validate(data: any): boolean {
 		if (!data) { log(`invalid data`, 6); return false;}
 		if (typeof data !== "object") { log(`'data' is not of type 'object'`, 6); return false;}
@@ -192,4 +168,3 @@ export default class Song {
 		return true;
 	}
 }
-

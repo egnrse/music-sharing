@@ -6,7 +6,7 @@ import enquirer from "enquirer";
 
 import { PROJECT_ROOT,PUBLIC_PATH,FILES_PATH,FILE_TYPES,DB_FILE } from "./globals.js";
 import { log, loadDB } from  "./globals.js";
-import DateString from "./DateString.js";
+import DateString from "./shared/DateString.js";
 import Song from "./Song.js";
 
 
