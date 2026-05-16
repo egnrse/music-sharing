@@ -4,6 +4,7 @@
  * @author Elia
  */
 
+import type { SongKey } from "./shared/BaseSong.js"
 import FrontSong from "./FrontSong.js";
 
 
@@ -28,6 +29,7 @@ export const COLUMN_REC: Record<string, Column> = {
 		label: "Play",
 		noUpdate: true,
 		width: "5%",
+		content: "path",
 		render: (song: FrontSong) => 
 			`<button class='play-btn' data-src='${song.savePath}'>Play</button>`
 	},
@@ -36,37 +38,39 @@ export const COLUMN_REC: Record<string, Column> = {
 		width: "35%",
 		sortable: true,
 		type: "string",
-		render: (song: FrontSong) => `${song.name}`
+		content: "name"
 	},
 	artist: {
 		label: "Artist",
 		width: "25%",
 		sortable: true,
 		type: "string",
-		render: (song: FrontSong) => `${song.artist}`
+		content: "artist"
 	},
 	file: {
 		label: "File",
 		width: "5%",
 		sortable: true,
 		type: "string",
+		content: ["ext","path"],
 		render: (song: FrontSong) =>
 			`<a href='${song.savePath}' download>${song.ext}</a>`
 	},
-	duration: {
+	length: {
 		label: "Length",
 		width: "5%",
 		textAlign: "right",
 		sortable: true,
 		type: "string",
-		render: (song: FrontSong) => `${song.length}`
+		content: "length",
+		render: (song: FrontSong) => `${formatDuration(song.length)}`
 	},
 	releaseDate: {
 		label: "Released",
 		width: "10%",
 		sortable: true,
 		type: "string",
-		render: (song: FrontSong) => `${song.releaseDate}`
+		content: "releaseDate"
 	},
 };
 /** default active/visible columns */
@@ -104,6 +108,23 @@ export function escapeHtml(input: string): string {
 		.replace(/"/g, "&quot;")
 		.replace(/'/g, "&#039;");
 }
+/**
+ * format a duration into a nice human readable string (mm:ss/h:mm:ss)
+ * @param seconds - the length in seconds
+ * @param hour - if to split into hours too
+ * @return the formated string
+ */
+export function formatDuration(seconds: number, hour = false): string {
+	if (seconds < 0) log(`formatDuration(): input is below 0 (${seconds})`, 4);
+	const h = Math.floor(seconds / 3600);
+	const hm = Math.floor((seconds % 3600) / 60);	// minutes with hours removed
+	const m = Math.floor(seconds / 60);				// minutes ignoring hours
+	const s = Math.floor(seconds % 60);
+
+	if (hour && h > 0)
+		return `${h}:${hm.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+	else return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+}
 
 
 /// OTHER
@@ -115,7 +136,8 @@ export type Column = {
 	type?: string;		// data-type=
 	width?: string;		// colgroup.style.*
 	textAlign?: string;	// supports 'right' (implemented using css, default=left)
-	render: (song: FrontSong) => string;	// innerHTML= (how to render this column )
+	content?: SongKey[]|SongKey;	// what fields to fetch from the server (default render output string)
+	render?: (song: FrontSong) => string;	// innerHTML= (how to render this column; if not given shows this.content[0])
 };
 /** playmode states */
 export enum PlayMode {

@@ -5,6 +5,7 @@
  */
 
 import type { Column } from  "./globals.js";
+import type { SongKey } from "./shared/BaseSong.js"
 import { log, COLUMN_REC as c, DEFAULT_COLUMNS } from  "./globals.js";
 import FrontSong from "./FrontSong.js";
 
@@ -99,7 +100,15 @@ export default class Table {
 			const td = document.createElement("td")
 			// the function to call, on song changes
 			const renderCell = () => {
-				td.innerHTML = c.render(song)
+				if (typeof c.render === "function") {
+					td.innerHTML = c.render(song);
+				} else if (FrontSong.isKey(c.content)) {
+					td.innerHTML = `${song[c.content]}`;
+				} else if (c.content?.length && (FrontSong.isKey(c.content[0]))) {
+					td.innerHTML = `${song[c.content[0]]}`;
+				} else {
+					console.error("invalid cell: missing render and content", c)
+				}
 				if (c.textAlign?.toLowerCase() == "right") td.classList.add("textAlign-right");
 			};
 			renderCell();

@@ -5,7 +5,9 @@
  */
 
 import type { filesAPI } from "./shared/shared.js"
-import { log } from  "./globals.js";
+import type { SongKey } from "./shared/BaseSong.js"
+import type { Column } from  "./globals.js";
+import { log, DEFAULT_COLUMNS } from  "./globals.js";
 import Table from "./Table.js";
 import Player from "./Player.js";
 import FrontSong from "./FrontSong.js";
@@ -23,10 +25,28 @@ let songList: FrontSong[] = [];
 /**
  *	fetches the file list
  */
-async function fetchFileList(): Promise<filesAPI> {
-	log(`fetch: files.php`, 3);
+async function fetchFileList(cols:Column[] = DEFAULT_COLUMNS): Promise<filesAPI> {
+	log(`fetch: ./api/files`, 3);
+	log(`fetch: (columns: ${cols.map(c => c.label).join(",")})`, 4);
+	const fetchURL = new URL("./api/files", document.baseURI);
+	const params = new Set<SongKey>();
+	for (const c of cols) {
+		if (FrontSong.isKey(c.content)) {
+			params.add(c.content);
+		} else {
+			for (const p of c.content ?? []) {
+				if (FrontSong.isKey(p))
+					params.add(p);
+			}
+		}
+	}
+	params.forEach(p => {
+		fetchURL.searchParams.append("col", p);
+	});
+	log(`fetch: ${fetchURL.href}`, 5);
+
 	//const data: singleFile[] = await fetch(`list_files.php?offset=${offset}&limit=${limit}`).then(r => r.json());
-	const data: filesAPI = await fetch(`api/files`).then(r => r.json());
+	const data: filesAPI = await fetch(fetchURL).then(r => r.json());
 	//totalFiles = data.total;
 	return data;
 }
@@ -51,7 +71,8 @@ async function main() {
 	const data = await fetchFileList();
 	fileListRaw.push(...data);
 	for (const f of fileListRaw) {
-		const song = new FrontSong(f.path, f.name, f.artist);
+		const song = FrontSong.from(f);
+		log(`fetch: found '${song}'`, 5);
 		songList.push(song);
 
 		// autoload song
