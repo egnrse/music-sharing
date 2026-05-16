@@ -6,6 +6,7 @@
 import { log } from  "./shared.js";
 import DateString from "./DateString.js";
 
+
 export interface SongInterface {
 	id: string;
 	name: string;
@@ -22,6 +23,14 @@ export interface SongInterface {
 	tags: string[];
 }
 export type SongKey = keyof SongInterface;
+
+// allowed keys/fields for song
+const ALLOWEDKEYS = new Set<SongKey>([
+	"id","name","path","ext",
+	"artist","releaseDate","files",
+	"length","size","notes","tags"
+] satisfies SongKey[]);
+
 
 
 export default class BaseSong {
@@ -82,8 +91,8 @@ export default class BaseSong {
 		}
 	}
 
-	toString(): string {
-		return `BaseSong: ${this.showName()}`;
+	toString(this: BaseSong): string {
+		return `${this.constructor.name}: ${this.showName()}`;
 	}
 	toJSON({filtered = true}: {filtered?: boolean} = {}): SongInterface {
 		const obj = { ...this };
@@ -123,18 +132,17 @@ export default class BaseSong {
 	}
 
 	/** create a BaseSong obj from data */
-	static from(data: any): BaseSong {
-		if (!BaseSong.validate(data)) throw new Error("invalid song data");
+	static from<T extends typeof BaseSong>(this: T,	data: any): InstanceType<T> {
+		if (!this.validate(data))
+			throw new Error("invalid song data");
 
-		const song = new BaseSong(data.path, data.name);
+		const song = new this(data.path, data.name) as InstanceType<T>;
 		const { files, ...rest } = data;
+
 		// merge data into the song obj
-		Object.assign(
-			song,
-			rest
-		);
+		Object.assign(song, rest);
 		// handle recursion
-		song.files = (data.files ?? []).map((f: any) => BaseSong.from(f));
+		song.files = (data.files ?? []).map((f: any) => this.from(f));
 
 		return song;
 	}
@@ -148,20 +156,18 @@ export default class BaseSong {
 		if (typeof data.path !== "string") { log(`'data.path' is not of type 'string' (${data.path})`, 6); return false;}
 		if (typeof data.ext !== "string") { log(`'data.ext' is not of type 'string' (${data.ext})`, 6); return false;}
 
-		// allowed Song fields
-		const ALLOWEDKEYS = new Set<SongKey>([
-			"id","name","path","ext",
-			"artist","releaseDate","files",
-			"length","size","notes","tags"
-		] satisfies SongKey[]);
-
 		for (const key of Object.keys(data)) {
-			if (!ALLOWEDKEYS.has(key as SongKey)) {
+			if (!this.isKey(key)) {
 				log(`unexpected field: ${key}`, 6);
 				return false;
 			}
 		}
 
 		return true;
+	}
+
+	/** test if key is a valid key of BaseSong */
+	static isKey(key: unknown): key is SongKey {
+		return typeof key === "string" && ALLOWEDKEYS.has(key as SongKey);
 	}
 }

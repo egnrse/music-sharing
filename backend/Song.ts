@@ -55,10 +55,5 @@ export default class Song extends BaseSong {
 		//	}
 		//}
 	}
-	/** create a Song obj from data */
-	static override from(value: any): Song {
-		// Call the parent logic and cast the return type
-		return super.from(value) as Song;
-	}
 }
 

@@ -57,12 +57,5 @@ export default class FrontSong extends BaseSong {
 	private notify() {
 		this.listeners.forEach(fn => fn())
 	}
-
-	/** create a FrontSong obj from data */
-	static override from(value: any): FrontSong {
-		// Call the parent logic and cast the return type
-		let newSong = super.from(value) as FrontSong
-		return newSong;
-	}
 }
 
