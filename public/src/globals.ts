@@ -4,7 +4,8 @@
  * @author Elia
  */
 
-import { Track } from "./Track.js";
+import FrontSong from "./FrontSong.js";
+
 
 /** add extra parameters to global */
 declare global {
@@ -27,30 +28,30 @@ export const COLUMN_REC: Record<string, Column> = {
 		label: "Play",
 		noUpdate: true,
 		width: "5%",
-		render: (track: Track) => 
-			`<button class='play-btn' data-src='${track.savePath}'>Play</button>`
+		render: (song: FrontSong) => 
+			`<button class='play-btn' data-src='${song.savePath}'>Play</button>`
 	},
-	track: {
-		label: "Track",
+	name: {
+		label: "Name",
 		width: "35%",
 		sortable: true,
 		type: "string",
-		render: (track: Track) => `${track.name}`
+		render: (song: FrontSong) => `${song.name}`
 	},
 	artist: {
 		label: "Artist",
 		width: "25%",
 		sortable: true,
 		type: "string",
-		render: (track: Track) => `${track.artist}`
+		render: (song: FrontSong) => `${song.artist}`
 	},
 	file: {
 		label: "File",
 		width: "5%",
 		sortable: true,
 		type: "string",
-		render: (track: Track) =>
-			`<a href='${track.savePath}' download>${track.ext}</a>`
+		render: (song: FrontSong) =>
+			`<a href='${song.savePath}' download>${song.ext}</a>`
 	},
 	duration: {
 		label: "Length",
@@ -58,21 +59,25 @@ export const COLUMN_REC: Record<string, Column> = {
 		textAlign: "right",
 		sortable: true,
 		type: "string",
-		render: (track: Track) => `${track.duration}`
+		render: (song: FrontSong) => `${song.length}`
 	},
 	releaseDate: {
 		label: "Released",
 		width: "10%",
 		sortable: true,
 		type: "string",
-		render: (track: Track) => `${track.releaseDate}`
+		render: (song: FrontSong) => `${song.releaseDate}`
 	},
 };
+/** default active/visible columns */
+const c = COLUMN_REC;	// helper
+export const DEFAULT_COLUMNS:Column[] = [c.play,c.name,c.artist,c.file];
 /** special data values */
 export const FIELD_VALUES = {
 	NOTLOADED: "(...)",	// data not loaded yet
 	EMPTY: "(empty)"			// missing or empty data 
 }
+
 
 /// FUNCTIONS
 /**
@@ -105,32 +110,13 @@ export function escapeHtml(input: string): string {
 /** object to store info about a table columns */
 export type Column = {
 	label: string;		// name at the top (header)
-	noUpdate?: boolean;	// do not update the cell on track changes (default=false)
+	noUpdate?: boolean;	// do not update the cell on song changes (default=false)
 	sortable?: boolean;	// data-sortable= (if the column is sortable, default=false)
 	type?: string;		// data-type=
 	width?: string;		// colgroup.style.*
 	textAlign?: string;	// supports 'right' (implemented using css, default=left)
-	render: (track:Track) => string;	// innerHTML= (how to render this column )
+	render: (song: FrontSong) => string;	// innerHTML= (how to render this column )
 };
-/** a string that holds a (server) filepath */
-export type FilePath = string & { __brand: "FilePath" };
-/** /api/files.php returns a list of this */
-export interface singleFile {
-	name: string;
-	folder: string;
-}
-/** /api/file.php?path=files/file.mp3 returns this */
-export interface detailsFile {
-	name: string;
-	folder: string;
-	path: FilePath;
-	filename: string;
-	extension: string;
-	size: number;
-	duration: string;
-	releaseDate: string;
-	tags: string[];
-}
 /** playmode states */
 export enum PlayMode {
 	Norm = 0,	// normal (stops after current song)

@@ -3,29 +3,30 @@
  * @fileoverview audioplayer
  * @author Elia
  */
-import type { FilePath } from  "./globals.js";
+
 import { log, PlayMode } from  "./globals.js";
-import { Track } from "./Track.js";
+import FrontSong from "./FrontSong.js";
+
 
 /// VAR/CONST
 const playHistoryMaxLength = 500;	/// maximum number of items in the play history to remember
 const prevTrackThreshold = 15;		/// when already playing a song, when to go to the beginning and when to go to the previous track (time in sec)
 
-export class Player {
+export default class Player {
 	// html elements
 	private player: HTMLAudioElement;
 	private currentTrackLabel: HTMLElement;
 	private modeBtn: HTMLButtonElement;
 
-	private trackList: Track[];		// list of all possible tracks
-	private playHistory: Track[];	// list of played tracks
+	private songList: FrontSong[];		// list of all possible tracks
+	private playHistory: FrontSong[];	// list of played tracks
 	private currentMode: PlayMode;
 	/**
 	 * the constructor of Player
-	 * @param trackList - a list of all possible songs (gets updated externally)
+	 * @param songList - a list of all possible songs (gets updated externally)
 	 */
-	constructor(trackList:Track[]) {
-		this.trackList = trackList;
+	constructor(songList: FrontSong[]) {
+		this.songList = songList;
 		this.playHistory = [];
 		
 		//const player-container = document.getElementById('player-container');
@@ -58,36 +59,36 @@ export class Player {
 	}
 
 	/** 
-	 * plays a track and updates currently playing
-	 * @param track - the track object to play
+	 * plays a song and updates currently playing
+	 * @param song - the song object to play
 	 * @param onlyLoad - only loads the track, does not start playback (default false)
 	 */
-	 playTrack(track: Track, onlyLoad = false) {
-		this.player.src = track.path;
+	 playSong(song: FrontSong, onlyLoad = false) {
+		this.player.src = song.path;
 		if (!onlyLoad) {
-			log(`Player: playing '${track}'`, 2);
+			log(`Player: playing '${song}'`, 2);
 			this.player.play();
 		}
-		else log(`Player: loading '${track}'`, 2);
+		else log(`Player: loading '${song}'`, 2);
 
-		this.playHistory.push(track);
+		this.playHistory.push(song);
 		while (this.playHistory.length > playHistoryMaxLength) {
 			this.playHistory.shift;
 		}
 
 		// update currently playing
-		this.currentTrackLabel.textContent = track.showName();
+		this.currentTrackLabel.textContent = song.showName();
 		// browser tab title
-		document.title = `${track.name} | My Music`;
+		document.title = `${song.name} | My Music`;
 		// add to url
 		const url = new URL(window.location.href);
-		url.searchParams.set('path', track.path);
+		url.searchParams.set('path', song.path);
 		window.history.replaceState({}, '', url);
 		// OS media session
 		if ("mediaSession" in navigator) {
 			navigator.mediaSession.metadata = new MediaMetadata({
-				title:  track.name,
-				artist:  track.artist,
+				title:  song.name,
+				artist:  song.artist,
 				//album: "The Ultimate Collection (Remastered)",
 				//artwork: [
 				//	{
@@ -126,14 +127,14 @@ export class Player {
 	 * play a track from a list
 	 * @param list - list from which to choose from
 	 */
-	private playRandom(list = this.trackList) {
+	private playRandom(list = this.songList) {
 		if (list.length === 0) {
 			log("no songs to select from randomly");
 			return;
 		}
 
 		const randomIndex = Math.floor(Math.random() * list.length);
-		this.playTrack(list[randomIndex]);
+		this.playSong(list[randomIndex]);
 	}
 
 	/** 
@@ -183,8 +184,8 @@ export class Player {
 				else {
 					let _ = this.playHistory.pop(); // current song
 					let prevTrack = this.playHistory.pop();
-					if (prevTrack) this.playTrack(prevTrack);
-					else log("no previous track");
+					if (prevTrack) this.playSong(prevTrack);
+					else log("no previous song");
 				}
 			});
 		}

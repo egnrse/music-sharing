@@ -3,18 +3,18 @@
  * @fileoverview load/manage the music table
  * @author Elia
  */
-import type { singleFile, Column } from  "./globals.js";
-import { log, COLUMN_REC as c } from  "./globals.js";
-import { Track } from "./Track.js";
+
+import type { Column } from  "./globals.js";
+import { log, COLUMN_REC as c, DEFAULT_COLUMNS } from  "./globals.js";
+import FrontSong from "./FrontSong.js";
 
 
 /// VAR/CONST
 const STAGGER_DELAY = 7;	// delay between staggered animating new table rows (in ms)
 const MAX_STAGGER = 7;		// max staggers (in instances)
-const columns:Column[] = [c.play,c.track,c.artist,c.file];	// active/visible columns
 
 
-export class Table {
+export default class Table {
 	// html elements
 	private table: HTMLTableElement;		// the table
 	private tcol: HTMLTableColElement;		// the table colgroup
@@ -22,17 +22,17 @@ export class Table {
 	private tbody: HTMLTableSectionElement;	// the table body
 	
 	private columns: Column[];					// the columns of the table
-	private trackList: Track[];					// the data for the table
-	private playTrack: (arg0:Track) => void;	// function to call, on 'play'-button press
+	private songList: FrontSong[];				// the data for the table
+	private playSong: (arg0:FrontSong) => void;	// function to call, on 'play'-button press
 
 	/**
 	 * the constructor of Table
-	 * @param playTrack - function to call, on 'play'-button press or row double click
+	 * @param playSong - function to call, on 'play'-button press or row double click
 	 */
-	constructor(playTrack: (arg0:Track) => void) {
-		this.columns = columns;
-		this.trackList = [];
-		this.playTrack = playTrack;
+	constructor(playSong: (arg0:FrontSong) => void) {
+		this.columns = DEFAULT_COLUMNS;
+		this.songList = [];
+		this.playSong = playSong;
 
 		this.table = document.getElementById("playlist") as HTMLTableElement;
 		if (!(this.table instanceof HTMLTableElement)) throw new Error("Table: missing '#playlist' TableElement");
@@ -48,17 +48,17 @@ export class Table {
 	}
 
 	/**
-	 * update the table with the new trackList
-	 * @param trackList - the data for the table
+	 * update the table with the new songList
+	 * @param songList - the data for the table
 	 */
-	update(trackList:Track[]) {
+	update(songList:FrontSong[]) {
 		log(`Table: update`, 3);
 
 		this.updateHeader();
 
 		// update table
-		this.populateTable(trackList, columns);
-		this.trackList = trackList;
+		this.populateTable(songList, DEFAULT_COLUMNS);
+		this.songList = songList;
 
 		this.sorting()
 	}
@@ -93,22 +93,23 @@ export class Table {
 		thead.appendChild(tr)
 		return thead;
 	}
-	private renderRow(columns:Column[], track:Track): HTMLTableRowElement {
+	private renderRow(columns:Column[], song:FrontSong): HTMLTableRowElement {
 		const tr = document.createElement('tr');
 		for (const c of columns) {
 			const td = document.createElement("td")
-			// the function to call, on track changes
+			// the function to call, on song changes
 			const renderCell = () => {
-				td.innerHTML = c.render(track)
+				td.innerHTML = c.render(song)
 				if (c.textAlign?.toLowerCase() == "right") td.classList.add("textAlign-right");
 			};
 			renderCell();
-			if (!c.noUpdate) track.subscribe(renderCell);
+			if (!c.noUpdate) song.subscribe(renderCell);
 			tr.appendChild(td);
 		}
 		log(`Table(row): ${tr.innerHTML}`, 5);
 		return tr;
 	}
+
 	/**
 	 * update/replace the table head and table colgroup
 	 * (also calls this.sorting())
@@ -125,24 +126,24 @@ export class Table {
 		this.sorting();
 	}
 	/**
-	 * creates the actual tr entries into the table from trackList
-	 * @param trackList - the data for the table
+	 * creates the actual tr entries into the table from songList
+	 * @param songList - the data for the table
 	 * @param columns - the columns to display
 	 */
-	private populateTable(trackList: Track[], columns: Column[]) {
+	private populateTable(songList: FrontSong[], columns: Column[]) {
 		this.tbody.innerHTML = '';
 		
-		trackList.forEach((track, index) => {
-			const tr  = this.renderRow(columns, track)
+		songList.forEach((song, index) => {
+			const tr  = this.renderRow(columns, song)
 			
 			// play functionality
 			const playBtn = tr.querySelector('.play-btn')
 			if (!playBtn) throw new Error("missing '.play-btn' ButtonElement");
 			playBtn.addEventListener('click', () => {
-				this.playTrack(track);
+				this.playSong(song);
 			});
 			tr.addEventListener('dblclick', () => {
-				this.playTrack(track);
+				this.playSong(song);
 			});
 
 			// animation
@@ -220,7 +221,7 @@ export class Table {
 			for (let i = 0; i < rows.length; i++) {
 				const cells = rows[i].getElementsByTagName('td');
 				let match = false;
-				for (let j = 1; j <= 2; j++) { // check Track and Artist columns
+				for (let j = 1; j <= 2; j++) { // check Name and Artist columns
 					if (cells[j].textContent.toLowerCase().includes(filter)) {
 						match = true;
 						break;

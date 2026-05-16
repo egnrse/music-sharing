@@ -6,19 +6,17 @@
 
 import type { filesAPI } from "./shared/shared.js"
 import { log } from  "./globals.js";
-import { Track } from "./Track.js";
-import { Table } from "./Table.js";
-import { Player } from "./Player.js";
-//import FrontSong from "./FrontSong.js";
+import Table from "./Table.js";
+import Player from "./Player.js";
+import FrontSong from "./FrontSong.js";
 
 
 /// VAR/CONST
-let table:Table;
-let player:Player;
+let table: Table;
+let player: Player;
 
-let fileListRaw:filesAPI = [];
-//let songList:FrontSong[] = [];
-let trackList:Track[] = [];		//dev
+let fileListRaw: filesAPI = [];
+let songList: FrontSong[] = [];
 
 
 /// FUNCTIONS
@@ -33,11 +31,11 @@ async function fetchFileList(): Promise<filesAPI> {
 	return data;
 }
 /** 
- * forwards the call to player.playTrack
- * @param args - allow arguments of player.playTrack
+ * forwards the call to player.playSong
+ * @param args - allow arguments of player.playSong
  */
-function playTrack(...args:Parameters<typeof player.playTrack>) {
-	player.playTrack(...args);
+function playSong(...args:Parameters<typeof player.playSong>) {
+	player.playSong(...args);
 }
 
 
@@ -48,29 +46,24 @@ async function main() {
 	if (pathParam) log(`autoload: '${pathParam}'`, 3);
 	else log(`autoload: no param 'path' found`, 3);
 
-	// manage tracks data-struct
+	// manage song data-struct
 	fileListRaw = [];
 	const data = await fetchFileList();
 	fileListRaw.push(...data);
 	for (const f of fileListRaw) {
-		const dir = f.path.substring(0, f.path.lastIndexOf('/'));	//dev
-		const base = f.path.split('/').pop();	//dev
-		const track = new Track(dir, base);	//dev
-		trackList.push(track);
-
-		//const song = new FrontSong(f.path, f.name, f.artist);
-		//songList.push(song);
+		const song = new FrontSong(f.path, f.name, f.artist);
+		songList.push(song);
 
 		// autoload song
-		if (pathParam && track.path === pathParam) {
-			playTrack(track, true);
+		if (pathParam && song.path === pathParam) {
+			playSong(song, true);
 		}
 	}
 	
 
 	// load table
-	//  (init hidden Track values)
-	table.update(trackList);
+	//  (init hidden Song values)
+	table.update(songList);
 
 	// load search
 	// -> give tracks?
@@ -78,8 +71,8 @@ async function main() {
 
 
 /// MAIN
-table = new Table(playTrack);
-player = new Player(trackList);
+table = new Table(playSong);
+player = new Player(songList);
 
 // defer all other things until the page has loaded
 document.addEventListener("DOMContentLoaded", () => {
