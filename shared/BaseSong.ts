@@ -121,7 +121,6 @@ export default class BaseSong {
 		if (this.id !== other.id) return false;
 		if (this.name != other.name) return false;
 		if (this.path != other.path) return false;
-		if (this.ext != other.ext) return false;
 
 		const a = this.files.map(f => f.id).sort();
 		const b = other.files.map(f => f.id).sort();
@@ -154,7 +153,7 @@ export default class BaseSong {
 		if (typeof data.id !== "string") { log(`'data.id' is not of type 'string' (${data.id})`, 6); return false;}
 		if (typeof data.name !== "string") { log(`'data.name' is not of type 'string' (${data.name})`, 6); return false;}
 		if (typeof data.path !== "string") { log(`'data.path' is not of type 'string' (${data.path})`, 6); return false;}
-		if (typeof data.ext !== "string") { log(`'data.ext' is not of type 'string' (${data.ext})`, 6); return false;}
+		if (data.ext && typeof data.ext !== "string") { log(`'data.ext' is not of type 'string' (${data.ext})`, 6); return false;}
 
 		for (const key of Object.keys(data)) {
 			if (!this.isKey(key)) {
