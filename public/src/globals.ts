@@ -6,6 +6,7 @@
 
 import type { SongKey } from "./shared/BaseSong.js"
 import FrontSong from "./FrontSong.js";
+import { logConfig } from  "./shared/shared.js";
 
 
 /** add extra parameters to global */
@@ -22,6 +23,10 @@ declare global {
  * can be overwritten in the browser console with 'VERBOSE=n'
  */
 window.VERBOSE = 3;
+// connect logConfig.VERBOSE to window,VERBOSE
+Object.defineProperty(logConfig, "VERBOSE", {
+	get() { return window.VERBOSE; }
+});
 
 /** a storage of possible table columns */
 export const COLUMN_REC: Record<string, Column> = {
