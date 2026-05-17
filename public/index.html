@@ -14,12 +14,15 @@
 	<h1>My Music</h1>
 	<div class="page">
 	<p style="text-align: center;">Hi, I make music as 3.Ndangered and this is some of the music I made.<br> It is a pile of good, bad and experimental stuff.</p>
+
+	<!-- table -->
 	<table id="playlist">
 		<colgroup><!-- colgroup will be replaced by js --></colgroup>
 		<thead><!-- thead will be replaced by js --></thead>
 		<tbody><!-- the music table --></tbody>
 	</table>
 
+	<!-- player -->
 	<div id="player-container">
 		<div id="above-player">
 			<div id="current-track">Nothing playing</div>
@@ -28,6 +31,16 @@
 		</div>
 		<audio id="player" controls></audio>
 	</div>
+
+	<!-- popup -->
+	<dialog id="song-details" closedby="any">
+		<div id="song-details-header-container">
+			<div id="song-details-header"><!-- will be replaced by js --></div>
+			<button id="song-details-close-btn" onclick="document.getElementById('song-details')?.close()">Close</button>
+		</div>
+		<div id="song-details-content"><!-- will be replaced by js --></div>
+	</dialog>
+
 	</div>	<!-- page -->
 
 	<script type="module" src="dist/main.js"></script>

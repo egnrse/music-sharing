@@ -25,6 +25,7 @@ window.VERBOSE = 3;
 
 /** a storage of possible table columns */
 export const COLUMN_REC: Record<string, Column> = {
+	// meta columns
 	play: {
 		label: "Play",
 		noUpdate: true,
@@ -33,6 +34,14 @@ export const COLUMN_REC: Record<string, Column> = {
 		render: (song: FrontSong) => 
 			`<button class='play-btn' data-src='${song.savePath}'>Play</button>`
 	},
+	options: {
+		label: "",
+		noUpdate: true,
+		width: "2%",
+		render: (song: FrontSong) => 
+			`<button class='options-btn' data-src='${song.savePath}'>(...)</button>`
+	},
+	// columns
 	name: {
 		label: "Name",
 		width: "35%",

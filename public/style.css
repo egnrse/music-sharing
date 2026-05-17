@@ -32,7 +32,6 @@ body {
 	padding-bottom: 6rem;
 }
 h1 { text-align: center; }
-
 button {
 	color: var(--main-text);
 	background: var(--accent);
@@ -42,24 +41,27 @@ button {
 button:hover {
 	background: var(--focus-bg);
 }
+a { color: #007BFF; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
 
 
 /* music table */
-table {
+table#playlist {
 	width: 100%;
 	border-collapse: collapse;
 	box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 	background: var(--background);
 }
-th, td {
+#playlist th, #playlist td {
 	padding: 0.8rem;
 	text-align: left;
 	border-bottom: 1px solid var(--border);
 }
-th.textAlign-right, td.textAlign-right {
+#playlist th.textAlign-right, #playlist td.textAlign-right {
 	text-align: right;
 }
-th[data-sortable="true"] {
+#playlist th[data-sortable="true"] {
 	cursor: pointer;
 	user-select: none;
 }
@@ -68,15 +70,71 @@ th[data-sortable="true"] {
 	font-size: 0.8em;
 	color: 555;
 }
-tr:hover { background-color: var(--focus2-bg); color: var(--focus2-fg) }
+#playlist tr:hover { background-color: var(--focus2-bg); color: var(--focus2-fg) }
 
 button.play-btn {
 	padding: 0.3rem 0.6rem;
 	border: none;
 }
+button.options-btn {
+	color: var(--main-text);
+	background: var(--background);
+	border: none;
+	border-radius: 10px;
+}
+#playlist tr:hover .options-btn { background-color: var(--focus2-bg); color: var(--focus2-fg); }
+#playlist tr:hover .options-btn:hover { background-color: var(--focus-bg); color: var(--focus2-fg); }
 
-a { color: #007BFF; text-decoration: none; }
-a:hover { text-decoration: underline; }
+
+/* popup */
+dialog {
+	background: var(--background);
+	min-width: min(400px, 90vw);
+	max-width: min(600px, 90vw);
+	padding: 0rem;
+	margin: auto;
+	border: none;
+	box-shadow: 10px 20px 20px rgba(0,0,0,0.1);
+}
+dialog::backdrop {
+	/*background: var(--bg-dark);*/
+	background: rgb(0,0,0);
+	opacity: 0.3;
+}
+dialog:modal {
+	/* does not work */
+	animation: fadein 1.2s ease;
+}
+.song-table {
+	width: 100%;
+	border-collapse: collapse;
+}
+.song-table th, .song-table td {
+	padding: 0.2rem 0.8rem;
+	text-align: left;
+	word-break: break-word;
+	border-bottom: 1px solid var(--border);
+}
+.song-table tr:not(:last-child) {
+	border-bottom: 1px solid var(--border);
+}
+#song-details-header-container {
+	display: flex;
+	gap: 10px; /* space between items */
+	border-bottom: 1px solid var(--border);
+	padding: 0;
+}
+#song-details-header {
+	margin: auto;
+	text-align: center;
+}
+button#song-details-close-btn {
+	aspect-ratio: 1;
+	margin-left: auto;
+	border-radius: 1px;
+	cursor: pointer;
+	width: 4rem;
+}
 
 
 /* player container */

@@ -141,19 +141,40 @@ export default class Table {
 	 */
 	private populateTable(songList: FrontSong[], columns: Column[]) {
 		this.tbody.innerHTML = '';
+
+		// checks
+		let hasPlay = false;
+		let hasOptions = false;
+		columns.forEach((col) => {
+			if (col == c.play) hasPlay = true;
+			if (col == c.options) hasOptions = true;
+		});
+		if (!hasPlay || !hasOptions) log("Table: columns is missing 'play' or 'options'", 3);
+		log(`Table: columns: '${columns.map(c => c.label).join(",")}'`, 5);
 		
 		songList.forEach((song, index) => {
 			const tr  = this.renderRow(columns, song)
 			
 			// play functionality
-			const playBtn = tr.querySelector('.play-btn')
-			if (!playBtn) throw new Error("missing '.play-btn' ButtonElement");
-			playBtn.addEventListener('click', () => {
-				this.playSong(song);
-			});
+			if (hasPlay) {
+				const playBtn = tr.querySelector('.play-btn')
+				if (!playBtn) throw new Error("missing '.play-btn' ButtonElement");
+				playBtn.addEventListener('click', () => {
+					this.playSong(song);
+				});
+			}
 			tr.addEventListener('dblclick', () => {
 				this.playSong(song);
 			});
+
+			// options popup
+			if (hasOptions) {
+				const optionsBtn = tr.querySelector('.options-btn')
+				if (!optionsBtn) throw new Error("missing '.options-btn' ButtonElement");
+				optionsBtn.addEventListener('click', () => {
+					song.showDetails();
+				});
+			}
 
 			// animation
 			const cappedIndex = (index > MAX_STAGGER) ? MAX_STAGGER : index;
