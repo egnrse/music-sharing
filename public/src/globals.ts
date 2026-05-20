@@ -37,7 +37,7 @@ export const COLUMN_REC: Record<string, Column> = {
 		width: "2%",
 		content: "path",
 		render: (song: FrontSong) => 
-			`<button class='play-btn' data-src='${song.savePath}'>⯈</button>`
+			`<button class='play-btn' data-src='${song.savePath}'>▶</button>`
 	},
 	options: {
 		label: "",

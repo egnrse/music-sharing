@@ -31,7 +31,6 @@ body {
 	padding: 0 var(--side-rem);
 	background: var(--bg-dark);
 	color: var(--main-text);
-	padding-bottom: 6rem;
 }
 h1 { text-align: center; }
 button {
@@ -63,7 +62,7 @@ table#playlist {
 	background: var(--background);
 }
 #playlist th, #playlist td {
-	padding: 0.8rem;
+	padding: 0.47rem;
 	text-align: left;
 	border-bottom: 1px solid var(--border);
 }
@@ -81,30 +80,29 @@ table#playlist {
 	border: none;
 	margin: 0;
 	transform-origin: center;
+	padding: 0.39rem 0.5rem;
+	border-radius: 7px;
 }
 #playlist tr:hover button { background-color: var(--focus2-bg); color: var(--focus2-fg); }
 #playlist tr:hover button:hover { background-color: var(--focus-bg); color: var(--focus2-fg); }
 
 button.play-btn {
-	transform: scale(2);
-	padding: 0 0.3rem;
-	border-radius: 4px;
+	transform: scale(1.2);
+	display: inline-block;
+	vertical-align: 0.5rem;
 }
 button.options-btn {
-	/* not bold
-	transform: scale(1.7);
-	padding: 0.1rem 0.2rem;
-	border-radius: 5px; */
-	/* bold */
 	transform: scale(1.2);
-	padding: 0.39rem 0.5rem;
-	border-radius: 7px;
 }
 
 .sort-arrow {
-	padding-bottom: 5px;
 	font-size: 0.8em;
-	/* color: rgb(150 150 150); */
+	margin: 0;
+	padding: 0;
+	padding-left: 2px;
+	opacity: 0.6;
+	display: inline-block;
+	vertical-align: 0.148em;
 }
 
 
