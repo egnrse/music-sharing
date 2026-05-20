@@ -18,9 +18,26 @@ const app = express();
 
 
 /// ROUTING
-app.use(express.static(PUBLIC_PATH));			// ../public	-> /
-app.use('/files', express.static(FILES_PATH));	// ../files		-> /files
+app.use(express.static(PUBLIC_PATH, {
+	maxAge: "1h",
+	setHeaders(res) {
+		res.setHeader("Cache-Control", "no-cache, must-revalidate");
+	}
+}));											// ../public	-> /
+app.use('/files', express.static(FILES_PATH, {
+	maxAge: "24h",
+	setHeaders(res) {
+		res.setHeader("Cache-Control", "public, immutable, max-age=10800");
+	}
+}));											// ../files		-> /files
 app.use("/api", apiRoute);						// ./routes		-> /api
+app.use((req, res, next) => {
+	if (req.path.startsWith("/api")) {
+		res.setHeader("Cache-Control", "no-store");
+	}
+	next();
+});
+
 
 //app.get('/', (req, res) => {
 //  res.send('Hello World!')
