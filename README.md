@@ -1,4 +1,4 @@
-# track3
+# music-share
 A simple tool to share/publish music on the web. Created for my artproject [3.Ndangered](https://egnrse.eu/music).
 
 
@@ -15,10 +15,6 @@ pnpm start
 ```
 
 This will start the server on [localhost:3000](http://localhost:3000).
-
-
-Optionally install:  
-- `ffmpeg` (for file duration)
 
 
 ### Production

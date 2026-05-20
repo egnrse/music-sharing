@@ -2,7 +2,7 @@
 module.exports = {
 	apps: [
 		{
-			name: "track3 (server)",
+			name: "music-share (server)",
 			script: "backend/dist/server.js",
 			instances: 1,
 			exec_mode: "fork",

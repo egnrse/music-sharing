@@ -1,11 +1,11 @@
 {
-  "name": "track3",
+  "name": "music-share",
   "version": "0.0.1",
   "description": "share your music the way you want it",
-  "homepage": "https://github.com/egnrse/track3",
+  "homepage": "https://github.com/egnrse/music-sharing",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/egnrse/track3.git"
+    "url": "git+https://github.com/egnrse/music-sharing.git"
   },
   "license": "GPL-3.0-or-later",
   "author": "Elia Nitsche",

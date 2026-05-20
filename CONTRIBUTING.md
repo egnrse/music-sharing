@@ -13,6 +13,7 @@ pnpm cli		# interactively add/edit song in the database
 VERBOSE=3 pnpm dev
 ```
 
+
 ## Project Structure
 ```
 .
@@ -27,11 +28,17 @@ VERBOSE=3 pnpm dev
 │  ├─ src/         # fronted ts code
 │  ├─ style.css    # frontend css
 │  └─ tsconfig.json
+├─ shared/         # shared ts code (symlinked into modules)
+│  ├─ shared.ts    # general shared constants/types/functions
+│  └─ ...          # other shared objects
 ├─ files/          # audio files
 │  ├─ ...
 │  └─ data.json    # database file
-└─ package.json    # project config
+├─ base-tsconfig.jsoncjs  # shared tsconfig settings
+├─ ecosystem.config.cjs   # pm2 settings
+└─ package.json	   # project config
 ```
+
 
 ## Test
 We have some simple test:
@@ -41,4 +48,17 @@ pnpm test:back	# list all backend ts errors (using --noemit)
 pnpm test:css	# css linting tests
 pnpm test:html	# html linting tests
 pnpm test		# run all tests
+```
+
+
+## Notes
+Some useful commands:
+```sh
+pm2 start ecosystem.config.cjs
+pm2 ls
+pm2 dash
+pm2 attach 0
+pm2 delete 0
+
+VERBOSE=6 NODE_OPTIONS="--no-deprecation" pnpm cli
 ```
