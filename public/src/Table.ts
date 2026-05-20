@@ -70,7 +70,7 @@ export default class Table {
 		columns.forEach(c => {
 			const col = document.createElement("col")
 			col.style.width = c.width ?? "auto"
-			col.style.textAlign = c.textAlign ?? "auto"	// (does not get respected, also implemented using css class .textAlign-right)
+			col.style.textAlign = c.textAlign ?? "auto"	// (does not get respected, also implemented using css class .text-align-right)
 			colgroup.appendChild(col)
 		})
 		return colgroup;
@@ -88,7 +88,7 @@ export default class Table {
 				span.className = "sort-arrow";
 				th.appendChild(span);
 			}
-			if (c.textAlign?.toLowerCase() == "right") th.classList.add("textAlign-right");
+			if (c.textAlign?.toLowerCase() == "right") th.classList.add("text-align-right");
 			tr.appendChild(th)
 		}
 		thead.appendChild(tr)
@@ -109,7 +109,7 @@ export default class Table {
 				} else {
 					console.error("invalid cell: missing render and content", c)
 				}
-				if (c.textAlign?.toLowerCase() == "right") td.classList.add("textAlign-right");
+				if (c.textAlign?.toLowerCase() == "right") td.classList.add("text-align-right");
 			};
 			renderCell();
 			if (!c.noUpdate) song.subscribe(renderCell);

@@ -16,7 +16,7 @@
 	--bottom-rem: 1rem;
 }
 /* handle small screens */
-@media (max-width: 550px) {
+@media (width <= 550px) {
 	:root {
 		--side-rem: 0rem;
 		--bottom-rem: 0rem;
@@ -24,9 +24,11 @@
 }
 
 
+
+/* general */
 body {
 	font-family: sans-serif;
-	padding: 0rem var(--side-rem);
+	padding: 0 var(--side-rem);
 	background: var(--bg-dark);
 	color: var(--main-text);
 	padding-bottom: 6rem;
@@ -46,11 +48,18 @@ a:hover { text-decoration: underline; }
 
 
 
+/* header */
+.intro-text {
+	text-align: center
+}
+
+
+
 /* music table */
 table#playlist {
 	width: 100%;
 	border-collapse: collapse;
-	box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+	box-shadow: 0 2px 8px rgb(0 0 0 / 10%);
 	background: var(--background);
 }
 #playlist th, #playlist td {
@@ -58,43 +67,46 @@ table#playlist {
 	text-align: left;
 	border-bottom: 1px solid var(--border);
 }
-#playlist th.textAlign-right, #playlist td.textAlign-right {
+#playlist th.text-align-right, #playlist td.text-align-right {
 	text-align: right;
 }
 #playlist th[data-sortable="true"] {
 	cursor: pointer;
 	user-select: none;
 }
-.sort-arrow {
-	padding-bottom: 5px;
-	font-size: 0.8em;
-	color: 555;
-}
 #playlist tr:hover { background-color: var(--focus2-bg); color: var(--focus2-fg) }
 #playlist button {
 	color: var(--main-text);
 	background: var(--background);
 	border: none;
-	margin: 0 0;
+	margin: 0;
 	transform-origin: center;
 }
+#playlist tr:hover button { background-color: var(--focus2-bg); color: var(--focus2-fg); }
+#playlist tr:hover button:hover { background-color: var(--focus-bg); color: var(--focus2-fg); }
+
 button.play-btn {
 	transform: scale(2);
-	padding: 0.0rem 0.3rem;
+	padding: 0 0.3rem;
 	border-radius: 4px;
 }
 button.options-btn {
 	/* not bold
 	transform: scale(1.7);
 	padding: 0.1rem 0.2rem;
-	border-radius: 5px;*/
+	border-radius: 5px; */
 	/* bold */
 	transform: scale(1.2);
 	padding: 0.39rem 0.5rem;
 	border-radius: 7px;
 }
-#playlist tr:hover button { background-color: var(--focus2-bg); color: var(--focus2-fg); }
-#playlist tr:hover button:hover { background-color: var(--focus-bg); color: var(--focus2-fg); }
+
+.sort-arrow {
+	padding-bottom: 5px;
+	font-size: 0.8em;
+	/* color: rgb(150 150 150); */
+}
+
 
 
 /* popup */
@@ -102,31 +114,31 @@ dialog {
 	background: var(--background);
 	min-width: min(400px, 90vw);
 	max-width: min(600px, 90vw);
-	padding: 0rem;
+	padding: 0;
 	margin: auto;
 	border: none;
-	box-shadow: 10px 20px 20px rgba(0,0,0,0.1);
+	box-shadow: 10px 20px 20px rgb(0 0 0 / 10%);
 }
 dialog::backdrop {
-	/*background: var(--bg-dark);*/
-	background: rgb(0,0,0);
+	/* background: var(--bg-dark); */
+	background: rgb(0 0 0);
 	opacity: 0.3;
 }
 dialog:modal {
 	/* does not work */
 	animation: fadein 1.2s ease;
 }
-.song-table {
+#song-details-content .song-table {
 	width: 100%;
 	border-collapse: collapse;
 }
-.song-table th, .song-table td {
+#song-details-content .song-table th, #song-details-content .song-table td {
 	padding: 0.2rem 0.8rem;
 	text-align: left;
-	word-break: break-word;
+	word-break: normal;
 	border-bottom: 1px solid var(--border);
 }
-.song-table tr:not(:last-child) {
+#song-details-content .song-table tr:not(:last-child) {
 	border-bottom: 1px solid var(--border);
 }
 #song-details-header-container {
@@ -140,8 +152,6 @@ dialog:modal {
 	text-align: center;
 	width: 100%;
 }
-#song-details-content {
-}
 button#song-details-close-btn {
 	margin-left: auto;
 	border-radius: 1px;
@@ -151,10 +161,9 @@ button#song-details-close-btn {
 	width: 4.5rem;
 	font-size: 40px;
 	background-color: var(--background);
-	/*background-color: var(--focus2-bg);
-	color: var(--focus2-fg);*/
 }
  button#song-details-close-btn:hover { background-color: var(--focus-bg); color: var(--focus2-fg); }
+
 
 
 /* player container */
@@ -166,14 +175,13 @@ button#song-details-close-btn {
 	width: auto;
 	background: var(--background);
 	color: var(--main-text);
-	box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+	box-shadow: 0 -2px 8px rgb(0 0 0 / 10%);
 	z-index: 1000;
 	display: flex;
 	flex-direction: column;
 	box-sizing: border-box;
 	border-radius: 1px;
 }
-
 #player-container audio {
 	width: 100%;
 	margin-top: 0.3rem;
@@ -219,19 +227,18 @@ button#play-mode-btn {
 	margin-top: 0.3rem;
 	box-sizing: border-box;
 	border: solid 1px var(--border);
-	/*
-	border: none;
-	*/
+	/* border: none; */
 }
+
 
 
 /* animation */
 .fade-in {
 	opacity: 0;
 	transform: translateY(3px);
-	animation: fadeInRow 400ms ease forwards;
+	animation: fade-in-row 400ms ease forwards;
 }
-@keyframes fadeInRow {
+@keyframes fade-in-row {
 	to {
 		opacity: 1;
 		transform: translateY(0);

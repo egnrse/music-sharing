@@ -23,5 +23,12 @@ jobs:
           cache: 'pnpm'
       - name: install deps
         run: pnpm install --frozen-lockfile
-      - name: run tests
-        run: pnpm test
+
+      - name: backend typescript
+        run: pnpm test:back
+      - name: frontend typescript
+        run: pnpm test:front
+      - name: html lint
+        run: pnpm test:html
+      - name: css lint
+        run: pnpm test:css

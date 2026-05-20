@@ -13,7 +13,7 @@ import BaseSong from "./shared/BaseSong.js"
 export default class FrontSong extends BaseSong {
 	override files: FrontSong[] = [];
 
-	private listeners: (() => void)[] = []		// functions to call on field changes
+	private listeners: Set<(() => void)> = new Set();	// functions to call on field changes
 	private fetched: boolean = false;			// if all data was fetched from the server
 
 	constructor(filePath: string, name?: string, artist?: string) {
@@ -49,11 +49,11 @@ export default class FrontSong extends BaseSong {
 
 	/** add a function as a listener (which will get called on field changes) */
 	subscribe(fn: () => void) {
-		this.listeners.push(fn)
+		this.listeners.add(fn)
 	}
 	/** notify subscribers of a field change */
 	private notify() {
-		log(`FrontSong(notify): ${this.listeners.length}`, 5);
+		log(`FrontSong(notify): ${this.listeners.size}`, 5);
 		this.listeners.forEach(fn => fn())
 	}
 
@@ -72,6 +72,16 @@ export default class FrontSong extends BaseSong {
 		if (!(header instanceof HTMLDivElement)) throw new Error("FrontSong(showDetails): missing '#song-details-header' DivElement");
 		const content = document.getElementById("song-details-content") as HTMLDivElement
 		if (!(content instanceof HTMLDivElement)) throw new Error("FrontSong(showDetails): missing '#song-details-content' DivElement");
+		const closeBtn = document.getElementById("song-details-close-btn") as HTMLButtonElement
+		if (!(closeBtn instanceof HTMLButtonElement)) throw new Error("FrontSong(showDetails): missing '#song-details-close-btn' ButtonElement");
+
+		// connect close button
+		if (closeBtn.dataset.hasListener !== 'true') {
+			closeBtn.addEventListener('click', () => {
+				dialog.close();
+			});
+			closeBtn.dataset.hasListener = 'true';
+		}
 
 		// the function to call on song changes (renders the popup content)
 		const updatePopup = () => {

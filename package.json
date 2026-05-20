@@ -19,7 +19,9 @@
     "build": "pnpm run build:front && pnpm run build:back",
     "test:front": "tsc --noEmit -p ./public/",
     "test:back": "tsc --noEmit -p ./backend/",
-    "test": "pnpm run test:front && pnpm run test:back",
+    "test:css": "stylelint ./public/**/*.css --config .stylelintrc.json",
+    "test:html": "htmlhint ./public/**/*.html --config .htmlhintrc --ignore \"node_modules/**\"",
+    "test": "pnpm run test:front && pnpm run test:back && pnpm run test:css && pnpm run test:html",
     "cli": "pnpm tsx ./backend/cli.ts",
     "clean": "rm -rf ./backend/dist/* ./public/dist/*"
   },
@@ -32,6 +34,9 @@
     "typescript": "^6.0.3"
   },
   "devDependencies": {
+    "htmlhint": "^1.9.2",
+    "stylelint": "^17.11.1",
+    "stylelint-config-standard": "^40.0.0",
     "tsx": "^4.21.0"
   },
   "optionalDependencies": {
