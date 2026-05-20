@@ -32,19 +32,20 @@ Object.defineProperty(logConfig, "VERBOSE", {
 export const COLUMN_REC: Record<string, Column> = {
 	// meta columns
 	play: {
-		label: "Play",
+		label: "",
 		noUpdate: true,
-		width: "5%",
+		width: "2%",
 		content: "path",
 		render: (song: FrontSong) => 
-			`<button class='play-btn' data-src='${song.savePath}'>Play</button>`
+			`<button class='play-btn' data-src='${song.savePath}'>⯈</button>`
 	},
 	options: {
 		label: "",
 		noUpdate: true,
 		width: "2%",
+		content: "path",
 		render: (song: FrontSong) => 
-			`<button class='options-btn' data-src='${song.savePath}'>(...)</button>`
+			`<button class='options-btn' data-src='${song.savePath}'><b>⋯</b></button>`
 	},
 	// columns
 	name: {
@@ -89,7 +90,7 @@ export const COLUMN_REC: Record<string, Column> = {
 };
 /** default active/visible columns */
 const c = COLUMN_REC;	// helper
-export const DEFAULT_COLUMNS:Column[] = [c.play,c.name,c.artist,c.file];
+export const DEFAULT_COLUMNS:Column[] = [c.play,c.name,c.artist,c.releaseDate,c.options];
 /** special data values */
 export const FIELD_VALUES = {
 	NOTLOADED: "(...)",	// data not loaded yet

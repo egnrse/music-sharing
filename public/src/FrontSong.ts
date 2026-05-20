@@ -79,19 +79,25 @@ export default class FrontSong extends BaseSong {
 			header.innerHTML = `<h3>${this.showName()}</h3>`;
 
 			// content
+			const ext = `<a href='${this.savePath}' download>${this.ext}</a>`
 			const size = this.size > 0 ? `${(this.size / 1024 / 1024).toFixed(2)} MB` : "-";	// bytes -> MB
+			const files: string[] = [];
+			this.getPaths().forEach((path) => {
+				files.push(`<a href='${path}'>${path}</a>`)
+			});
+
 			const html = `
 			<table class="song-table">
 				${this.row("ID", this.id)}
 				${this.row("Artist", this.artist)}
 				${this.row("Path", this.path)}
-				${this.row("Extension", this.ext)}
+				${this.row("Extension", ext)}
 				${this.row("Length", formatDuration(this.length))}
 				${this.row("Size", size)}
 				${this.row("Release Date", this.releaseDate)}
 				${this.row("Tags", this.tags.join(", "))}
 				${this.row("Notes", this.notes)}
-				${this.row("Files", this.getPaths().join(", "))}
+				${this.row("Files", files.join(", "))}
 			</table>
 			`;
 			content.innerHTML = html;
