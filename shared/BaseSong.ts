@@ -133,7 +133,7 @@ export default class BaseSong {
 	/** create a BaseSong obj from data */
 	static from<T extends typeof BaseSong>(this: T,	data: any): InstanceType<T> {
 		if (!this.validate(data))
-			throw new Error("invalid song data");
+			throw new Error(`invalid song data ('${data.id ?? JSON.stringify(data, null, "\t")}')`);
 
 		const song = new this(data.path, data.name) as InstanceType<T>;
 		const { files, ...rest } = data;

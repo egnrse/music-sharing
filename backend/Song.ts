@@ -22,6 +22,11 @@ export default class Song extends BaseSong {
 			const parts = base.split(SEPERATOR).map(s => s.trim());
 			this.name = parts.slice(1).join(SEPERATOR) ?? "";
 			this.artist = parts[0] ?? "";
+
+			if (this.name == "") {
+				this.name = this.artist;
+				this.artist = "";
+			}
 		}
 	}
 
