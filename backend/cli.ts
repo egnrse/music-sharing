@@ -40,6 +40,17 @@ function getFiles(directory: string, types?: string[], root?: string): string[] 
 	return walk(directory);
 }
 
+// check file paths in allFiles
+function checkMissingPaths(list:string[], allFiles:string[]) {
+	const missingPaths: string[] = [];
+	for (const file of list) {
+		if (!allFiles.includes(file)) {
+			missingPaths.push(file);
+		}
+	}
+	return missingPaths;
+}
+
 /*
 // group by filename without extension
 function groupFiles(files: string[]) {
@@ -114,6 +125,23 @@ async function main() {
 	const notInDbFiles = allFiles.filter(f => !allDbFiles.has(f));
 	log(`files not in DB:\n${notInDbFiles.map(p => `\t- ${p}`).join("\n")}`, 5);
 
+	// check file paths in allFiles
+	const missingPaths = checkMissingPaths(Array.from(allDbFiles), allFiles);
+	if (missingPaths.length > 0) {
+		console.log(`Missing files:\n${missingPaths.map(p => `\t- ${p}`).join("\n")}`, 1);
+		const removeAsk = new (enquirer as any).Confirm({
+			name: "remove",
+			message: "Do you want to remove these from the DB?",
+		});
+		const remove = await removeAsk.run();
+		if (remove) {
+			for (const p of missingPaths) {
+				delete db[p];
+			}
+		}
+	}
+
+	// new songs
 	const newSongs: Record<string, Song> = {}
 	for (const file of notInDbFiles) {
 		// TODO: try auto grouping
@@ -123,8 +151,6 @@ async function main() {
 		newSongs[song.id] = song;
 		//log(`${newSongs.at(-1)?.artist} - ${newSongs.at(-1)?.name}`);
 	}
-
-	// new songs
 	if (Object.entries(newSongs).length > 0) {
 		console.log("Adding new Songs:")
 		for (const [key,song] of Object.entries(newSongs)) {
