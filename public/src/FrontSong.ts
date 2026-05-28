@@ -98,7 +98,8 @@ export default class FrontSong extends BaseSong {
 
 			const html = `
 			<table class="song-table">
-				${this.row("ID", this.id)}
+				${window.VERBOSE > 3 ? this.row("ID", this.id) : ""}
+				${this.row("Name", this.name)}
 				${this.row("Artist", this.artist)}
 				${this.row("Path", this.path)}
 				${this.row("Extension", ext)}
