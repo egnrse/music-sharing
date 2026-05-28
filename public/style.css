@@ -31,6 +31,7 @@ body {
 	padding: 0 var(--side-rem);
 	background: var(--bg-dark);
 	color: var(--main-text);
+	padding-bottom: 6rem;	/* so that the player does not block the last song */
 }
 h1 { text-align: center; }
 button {
